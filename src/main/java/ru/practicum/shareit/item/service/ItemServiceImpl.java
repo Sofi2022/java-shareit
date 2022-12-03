@@ -27,7 +27,7 @@ public class ItemServiceImpl implements ItemService {
         if (usersIds.contains(item.getOwner().getId())) {
             return itemRepository.addItem(item);
         } else {
-            throw new NotFoundException(String.format("Пользователя с таким id нет ", item.getOwner().getId()));
+            throw new NotFoundException("Пользователя с таким id нет ");
         }
     }
 
