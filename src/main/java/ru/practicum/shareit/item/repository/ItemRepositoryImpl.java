@@ -51,28 +51,11 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> searchByName(String text) {
-
-        List<Item> items = getItems();
-        List<String> itemNames = items.stream()
-                .map(item -> item.getName().toLowerCase())
-                .filter(name -> name.contains(text.toLowerCase()))
+        String textToLowerCase = text.toLowerCase();
+        return items.values().stream()
+                .filter(item -> item.getName().toLowerCase().contains(textToLowerCase)
+                        || item.getDescription().toLowerCase().contains(textToLowerCase))
+                .filter(Item::getAvailable)
                 .collect(Collectors.toList());
-
-        List<String> itemDescriptions = items.stream()
-                .map(item -> item.getDescription().toLowerCase())
-                .filter(description -> description.contains(text.toLowerCase()))
-                .collect(Collectors.toList());
-
-        Set<Item> result = new HashSet<>();
-
-        for (Item item : items) {
-            if (itemNames.contains(item.getName().toLowerCase())) {
-                result.add(item);
-            }
-            if (itemDescriptions.contains(item.getDescription().toLowerCase())) {
-                result.add(item);
-            }
-        }
-        return new ArrayList<>(result);
     }
 }

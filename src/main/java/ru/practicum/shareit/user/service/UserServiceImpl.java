@@ -23,11 +23,11 @@ public class UserServiceImpl implements UserService {
     public void validate(User user) {
         List<User> users = userRepository.getAllUsers();
         if (users.contains(user)) {
-            throw new AlreadyExists("Такой пользователь уже существует");
+            throw new AlreadyExists("Такой пользователь уже существует " + user);
         }
         boolean match = users.stream().map(User::getEmail).anyMatch((value) -> value.equals(user.getEmail()));
         if (match) {
-            throw new ValidationException("Такой email уже есть");
+            throw new ValidationException("Такой email уже есть " + user.getEmail());
         }
     }
 
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         if (userIds.contains(userId)) {
             return userRepository.getUserById(userId);
         } else {
-            throw new NotFoundException("Такого пользователя нет");
+            throw new NotFoundException("Такого пользователя нет " + userId);
         }
     }
 

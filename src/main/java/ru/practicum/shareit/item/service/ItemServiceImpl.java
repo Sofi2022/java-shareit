@@ -27,7 +27,7 @@ public class ItemServiceImpl implements ItemService {
         if (usersIds.contains(item.getOwner().getId())) {
             return itemRepository.addItem(item);
         } else {
-            throw new NotFoundException("Пользователя с таким id нет ");
+            throw new NotFoundException("Пользователя с таким id нет " + item.getOwner().getId());
         }
     }
 
@@ -63,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemsIds.contains(itemId)) {
             return itemRepository.getItemById(itemId);
         } else {
-            throw new NotFoundException("Такого пользователя нет");
+            throw new NotFoundException("Такой вещи нет " + itemId);
         }
     }
 
