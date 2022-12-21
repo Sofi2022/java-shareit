@@ -1,11 +1,10 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.practicum.shareit.request.ItemRequest;
+import lombok.Data;
 import ru.practicum.shareit.user.model.User;
 
-@Getter
+@Data
 @AllArgsConstructor
 public class UpdateItemDto {
 
@@ -18,6 +17,4 @@ public class UpdateItemDto {
     private Boolean available;
 
     private User owner;
-
-    private ItemRequest request;
 }
