@@ -28,11 +28,11 @@ public class Booking {
     @Column(name = "end_date", nullable = false)
     private LocalDateTime end;
 
-    @OneToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @OneToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "booker_id")
     private User booker;
 

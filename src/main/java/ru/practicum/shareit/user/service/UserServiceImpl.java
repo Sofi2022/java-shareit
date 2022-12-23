@@ -23,8 +23,8 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public void validate(User user) {
+
+    private void validate(User user) {
         List<User> users = userRepository.findAll();
         if (users.contains(user)) {
             throw new AlreadyExists("Такой пользователь уже существует " + user);

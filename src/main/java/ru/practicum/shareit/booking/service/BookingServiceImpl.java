@@ -128,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking getBookingById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Такого букинга нет "
                 + bookingId));
-        valdateUser(userId);
+        validateUser(userId);
         if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
             return booking;
         } else {
@@ -139,7 +139,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllUserBookings(Long userId) {
-        valdateUser(userId);
+        validateUser(userId);
         List<Booking> result = bookingRepository.findBookingByBookerIdOrderByStartDesc(userId);
         return result;
     }
@@ -151,7 +151,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getBookingsByState(State state, Long userId) {
-        valdateUser(userId);
+        validateUser(userId);
         switch (state) {
             case ALL:
                 return bookingRepository.findBookingByBookerIdOrderByStartDesc(userId);
@@ -172,7 +172,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getOwnerBookingsByState(State state, Long userId) {
-        valdateUser(userId);
+        validateUser(userId);
         List<Long> owners = itemRepository.findAll().stream().map(item -> item.getOwner().getId()).collect(Collectors.toList());
         if (!owners.contains(userId)) {
             throw new NotFoundException(userId + "не является владельцем");
@@ -195,7 +195,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    void valdateUser(Long userId) {
+    private void validateUser(Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
     }
 }
