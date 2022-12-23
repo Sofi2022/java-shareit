@@ -5,11 +5,12 @@ import lombok.Data;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Valid
 @Data
 @AllArgsConstructor
-public class ItemResponse {
+public class ItemDtoWithAvailable {
 
     private long id;
 
@@ -19,5 +20,6 @@ public class ItemResponse {
     @NotBlank
     private String description;
 
+    @NotNull
     private Boolean available;
 }
