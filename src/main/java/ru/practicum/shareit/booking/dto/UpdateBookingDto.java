@@ -1,23 +1,21 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
-public class Booking {
+public class UpdateBookingDto {
 
-    private long id;
+    private LocalDateTime start;
 
-    private LocalDate start;
-
-    private LocalDate end;
+    private LocalDateTime end;
 
     private Item item;
 
