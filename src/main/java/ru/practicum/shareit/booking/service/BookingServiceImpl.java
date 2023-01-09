@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.model.Booking;
@@ -50,11 +51,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public Booking addBooking(Booking booking, Long itemId, Long userId) {
         validate(booking, itemId);
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
 
-        Item item = itemRepository.getById(itemId);
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));;
         if (userId == item.getOwner().getId()) {
             throw new NotFoundException("Нельзя забронировать свою вещь " + itemId);
         }
@@ -79,8 +81,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public Booking approveOrRejectBooking(Long bookingId, Boolean isApprove, Long userid) {
-        Booking booking = getBookingById(bookingId);
+        //Booking booking = getBookingById(bookingId);
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
+                new NotFoundException("Такого букинга нет " + bookingId));
         if (booking.getItem().getOwner().getId() == userid) {
             if (isApprove) {
                 if (booking.getStatus() == Status.APPROVED) {
@@ -92,14 +97,14 @@ public class BookingServiceImpl implements BookingService {
                 booking.setStatus(Status.REJECTED);
                 bookingRepository.save(booking);
             }
-            bookingRepository.save(booking);
-            return booking;
+            return bookingRepository.save(booking);
         } else {
             throw new NotFoundException("Вы не являетесь владельцем данной вещи");
         }
     }
 
     @Override
+    @Transactional
     public Booking update(Long bookingId, Long userId, Booking booking) {
         if (booking.getItem().getOwner().getId() == userId) {
             if (booking.getStart() != null) {
@@ -117,8 +122,7 @@ public class BookingServiceImpl implements BookingService {
             if (booking.getBooker() != null) {
                 booking.setBooker(booking.getBooker());
             }
-            bookingRepository.save(booking);
-            return getBookingById(bookingId);
+            return bookingRepository.save(booking);
         } else {
             throw new ValidationException("Вы не являетесь владельцем данной вещи");
         }

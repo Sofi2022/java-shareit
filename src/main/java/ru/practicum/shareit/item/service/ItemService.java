@@ -19,4 +19,6 @@ public interface ItemService {
     List<Item> searchByName(String text);
 
     Comment addComment(Long userId, Long itemId, Comment comment);
+
+    List<Item> findAllByRequestIds(List<Integer> ids);
 }

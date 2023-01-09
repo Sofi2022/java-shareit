@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -46,6 +47,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
+    @Transactional
     public Item addItem(Item item) {
         List<Long> usersIds = userService.getUsersIds();
         if (usersIds.contains(item.getOwner().getId())) {
@@ -56,8 +58,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public Item updateItem(Item item, Long itemId, Long userId) {
-        Item newItem = itemRepository.getById(itemId);
+        Item newItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
         if (newItem.getOwner().getId() == userId) {
             if (item.getName() != null) {
                 newItem.setName(item.getName());
@@ -71,8 +74,7 @@ public class ItemServiceImpl implements ItemService {
             if (item.getOwner() != null) {
                 newItem.setOwner(item.getOwner());
             }
-            itemRepository.save(newItem);
-            return newItem;
+            return itemRepository.save(newItem);
         } else {
             throw new NotFoundException("Вы не имеете права обновить объект");
         }
@@ -124,6 +126,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public Comment addComment(Long userId, Long itemId, Comment comment) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
         User author = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет "
@@ -139,5 +142,10 @@ public class ItemServiceImpl implements ItemService {
         } else {
             throw new ValidationException("Вы не бронировали данную вещь " + itemId);
         }
+    }
+
+    @Override
+    public List<Item> findAllByRequestIds(List<Integer> ids) {
+        return itemRepository.findAllByRequestIds(ids);
     }
 }

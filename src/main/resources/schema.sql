@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS users, items, bookings, comments;
+DROP TABLE IF EXISTS users, items, bookings, comments, requests;
 
 
 CREATE TABLE IF NOT EXISTS users (
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS BOOKINGS (
     ID         INTEGER auto_increment,
     START_DATE TIMESTAMP WITHOUT TIME ZONE,
     END_DATE   TIMESTAMP WITHOUT TIME ZONE,
-    ITEM_ID    INTEGER,
+    ITEM_ID    INTEGER not null,
     BOOKER_ID  INTEGER not null,
     STATUS     VARCHAR(50),
     constraint BOOKINGS_PK
@@ -53,6 +53,18 @@ CREATE TABLE IF NOT EXISTS COMMENTS
         foreign key (ITEM) references ITEMS,
     constraint COMMENTS_USERS_ID_FK
         foreign key (AUTHOR) references USERS
+);
+
+CREATE TABLE IF NOT EXISTS REQUESTS
+(
+    ID   INTEGER auto_increment,
+    REQUESTER_ID INTEGER                not null,
+    DESCRIPTION  CHARACTER VARYING(500) not null,
+    CREATED    TIMESTAMP         not null,
+    constraint REQUESTS_PK
+        primary key (ID),
+    constraint REQUESTS_USERS_ID_FK
+        foreign key (REQUESTER_ID) references USERS
 );
 
 

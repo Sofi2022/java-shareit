@@ -1,34 +1,30 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
 import org.hibernate.annotations.CreationTimestamp;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Valid
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Jacksonized
-public class ItemRequestDto {
-
-    @NotNull
-    private int id;
+public class ItemCreateRequest {
 
     @NotBlank
     private String description;
 
+    private User requester;
+
     @CreationTimestamp
     private LocalDateTime created;
-
-    private List<Item> items;
 }

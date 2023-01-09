@@ -7,6 +7,8 @@ import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.List;
+
 
 @Mapper(componentModel = "spring", uses = {CommentMapper.class, BookingMapper.class})
 public interface ItemMapper {
@@ -23,4 +25,10 @@ public interface ItemMapper {
     @Mapping(target = "id", source = "item.id")
     @Mapping(target = "comments", source = "item.comments")
     ItemResponseWithBooking toItemWithBooking(Item item, ShortBookingDto lastBooking, ShortBookingDto nextBooking);
+
+    @Mapping(target = "ownerId", source = "owner.id")
+    ItemDto toShortItemDto(Item item);
+
+    @Mapping(target = "ownerId", source = "owner.id")
+    List<ItemDto> toListDto(List<Item> items);
 }

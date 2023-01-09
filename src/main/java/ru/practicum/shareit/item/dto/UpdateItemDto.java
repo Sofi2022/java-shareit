@@ -17,4 +17,6 @@ public class UpdateItemDto {
     private Boolean available;
 
     private User owner;
+
+    private Long requestId;
 }
