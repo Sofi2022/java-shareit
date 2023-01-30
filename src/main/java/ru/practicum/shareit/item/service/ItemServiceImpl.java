@@ -16,6 +16,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
@@ -23,6 +25,8 @@ import ru.practicum.shareit.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.model.Status.APPROVED;
@@ -45,16 +49,17 @@ public class ItemServiceImpl implements ItemService {
 
     private final BookingMapper bookingMapper;
 
+    private final RequestRepository requestRepository;
+
 
     @Override
     @Transactional
-    public Item addItem(Item item) {
-        List<Long> usersIds = userService.getUsersIds();
-        if (usersIds.contains(item.getOwner().getId())) {
+    public Item addItem(Item item, Long userId) {
+            if(item.getRequest().getId() == 0) {
+                item.setRequest(null);
+            }
+            item.setOwner(userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId)));
             return itemRepository.save(item);
-        } else {
-            throw new NotFoundException("Пользователя с таким id нет " + item.getOwner().getId());
-        }
     }
 
     @Override
@@ -137,8 +142,7 @@ public class ItemServiceImpl implements ItemService {
             item.getComments().add(comment);
             comment.setItem(item);
             comment.setAuthor(author);
-            commentRepository.save(comment);
-            return comment;
+            return commentRepository.save(comment);
         } else {
             throw new ValidationException("Вы не бронировали данную вещь " + itemId);
         }

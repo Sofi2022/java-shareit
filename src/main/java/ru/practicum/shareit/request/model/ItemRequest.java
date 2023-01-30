@@ -1,16 +1,18 @@
 package ru.practicum.shareit.request.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+//@AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
 @Table(name = "requests")
@@ -30,4 +32,8 @@ public class ItemRequest {
     @CreationTimestamp
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
+
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Item> items;
 }

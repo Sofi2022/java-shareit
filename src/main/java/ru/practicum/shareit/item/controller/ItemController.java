@@ -24,8 +24,9 @@ public class ItemController {
     @PostMapping
     public ItemResponse addItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                 @Valid @RequestBody ItemCreateRequest itemCreateRequest) {
-        System.out.println(itemCreateRequest);
-        return mapper.toItemDto(itemService.addItem(mapper.toItem(itemCreateRequest, userId)));
+        System.out.println("Create: " + itemCreateRequest);
+        System.out.println("Item: " + mapper.toItem(itemCreateRequest, userId));
+        return mapper.toItemDto(itemService.addItem(mapper.toItem(itemCreateRequest, userId), userId));
     }
 
     @PatchMapping("/{itemId}")
@@ -52,6 +53,6 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     CommentResponseDto addComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long itemId,
                                   @Valid @RequestBody CommentCreateDto comment) {
-        return commentMapper.toCommentDto(itemService.addComment(userId, itemId, commentMapper.toComment(comment)));
+        return commentMapper.toCommentDto(itemService.addComment(userId, itemId, commentMapper.toComment(comment, userId, itemId)));
     }
 }

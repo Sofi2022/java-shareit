@@ -3,8 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 import org.hibernate.annotations.CreationTimestamp;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -24,7 +23,7 @@ public class CommentCreateDto {
     @CreationTimestamp
     private LocalDateTime created;
 
-    private Item item;
+    private ItemDto item;
 
-    private User author;
+    private UserDto author;
 }

@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.State;
@@ -54,18 +56,16 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public Booking addBooking(Booking booking, Long itemId, Long userId) {
         validate(booking, itemId);
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
 
+        User booker = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));;
         if (userId == item.getOwner().getId()) {
             throw new NotFoundException("Нельзя забронировать свою вещь " + itemId);
         }
-        User booker = userRepository.getById(userId);
         booking.setBooker(booker);
         booking.setItem(item);
         booking.setStatus(Status.WAITING);
-        bookingRepository.save(booking);
-        return getBookingById(booking.getId());
+        return bookingRepository.save(booking);
     }
 
     @Override
@@ -92,12 +92,12 @@ public class BookingServiceImpl implements BookingService {
                     throw new ValidationException("Статус уже подтвержден " + booking.getStatus());
                 }
                 booking.setStatus(Status.APPROVED);
-                bookingRepository.save(booking);
+                return bookingRepository.save(booking);
             } else {
                 booking.setStatus(Status.REJECTED);
-                bookingRepository.save(booking);
+                return bookingRepository.save(booking);
             }
-            return bookingRepository.save(booking);
+            //return bookingRepository.save(booking);
         } else {
             throw new NotFoundException("Вы не являетесь владельцем данной вещи");
         }
@@ -197,6 +197,23 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new IllegalArgumentException("Unknown state");
         }
+    }
+
+    @Override
+    public List<Booking> getAllWithPage(PageRequest pageRequest, long userId) {
+        Page<Booking> result = bookingRepository.findBookingsByBookerIdOrderByStartDesc(pageRequest, userId);
+        return result.getContent();
+    }
+
+    @Override
+    public List<Booking> getAllByOwnerWithPage(PageRequest pageRequest, Long userId) {
+        validateUser(userId);
+        List<Long> owners = itemRepository.findAll().stream().map(item -> item.getOwner().getId()).collect(Collectors.toList());
+        if (!owners.contains(userId)) {
+            throw new NotFoundException(userId + "не является владельцем");
+        }
+        Page<Booking> result = bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(pageRequest, userId);
+        return result.getContent();
     }
 
     private void validateUser(Long userId) {

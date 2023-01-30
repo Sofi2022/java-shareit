@@ -17,4 +17,6 @@ public interface UserService {
     List<User> getUsers();
 
     List<Long> getUsersIds();
+
+    void validate(User user);
 }

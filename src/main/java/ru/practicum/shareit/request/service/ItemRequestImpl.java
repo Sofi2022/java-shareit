@@ -10,8 +10,8 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.request.dto.ShortItemRequest;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
@@ -52,10 +52,14 @@ public class ItemRequestImpl implements RequestService{
 
 
     @Override
-    public List<ItemRequestDto> getItemRequests(Long userId) {
+    public List<ShortItemRequest> getItemRequests(Long userId) {
         User user = userService.getUserById(userId);
         List<ItemRequest> itemRequests =
                 repository.findAllByRequestor(user);
+        if(itemRequests.size() == 0){
+            List<ItemRequest> result = new ArrayList<>();
+            return mapper.toShortList(result);
+        }
         Map<Integer, List<Item>> map =
                 itemService.findAllByRequestIds(itemRequests.stream()
                                 .map(ItemRequest::getId)
@@ -63,21 +67,22 @@ public class ItemRequestImpl implements RequestService{
                         .stream()
                         .collect(Collectors.groupingBy(it -> it.getRequest().getId(), Collectors.toList()));
         return itemRequests.stream()
-                .map(mapper::toDto)
+                .map(mapper::toShortRequest)
                 .peek(itemRequest -> itemRequest
-                        .setItems(new ArrayList<>(map.getOrDefault(itemRequest.getId(), Collections.emptyList()))))
+                        .setItems(itemMapper.toListItemResponse(new ArrayList<>(map.getOrDefault(itemRequest.getId(),
+                                Collections.emptyList())))))
                 .collect(Collectors.toList());
     }
 
 
     @Override
-    public List<ItemRequest> getAllRequests() {
-        return repository.getAllItemRequests();
+    public List<ShortItemRequest> getAllRequests(Long userId) {
+        return mapper.toShortList(repository.getItemRequestByUserId(userId));
     }
 
     @Override
     public List<ItemRequest> getAllWithPage(PageRequest pageRequest, long userId) {
-        Page<ItemRequest> result = repository.findAllByRequesterId(pageRequest, userId);
+        Page<ItemRequest> result = repository.findItemRequestByRequester_IdIsNot(pageRequest, userId);
         return result.getContent();
     }
 
@@ -86,7 +91,8 @@ public class ItemRequestImpl implements RequestService{
     }
 
     @Override
-    public ItemRequest getById(long userId) {
-        return repository.findById(userId).orElseThrow(() -> new NotFoundException("Такого запроса нет " + userId));
+    public ShortItemRequest getById(long userId, long requestId) {
+        validateUser(userId);
+        return mapper.toShortRequest(repository.findById(requestId).orElseThrow(() -> new NotFoundException("Такого запроса нет " + requestId)));
     }
 }

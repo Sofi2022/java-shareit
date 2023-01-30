@@ -1,34 +1,33 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.request.dto;
 
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.practicum.shareit.item.dto.ItemResponse;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Valid
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Jacksonized
-public class CommentResponseDto {
+public class ShortItemRequest {
 
     @NotNull
-    private long id;
+    private int id;
 
     @NotBlank
-    @NotNull
-    private String text;
-
-    @NotBlank
-    private String authorName;
+    private String description;
 
     @CreationTimestamp
-    @NotNull
     private LocalDateTime created;
+
+    private List<ItemResponse> items;
 }
