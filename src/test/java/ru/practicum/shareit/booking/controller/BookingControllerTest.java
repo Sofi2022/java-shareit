@@ -132,15 +132,22 @@ class BookingControllerTest {
             update.setStart(LocalDateTime.of(2023, 1, 27, 12, 30));
             update.setEnd( LocalDateTime.of(2023, 1, 28, 18, 0));
 
+            booking.setStatus(Status.APPROVED);
+
+            User user2 = createUser("Маша", "Mari1998@ya.ru");
+            Item item2 = createItem("Декорации", "Декорации из шаров", true, user2);
+            Booking bookingRejected = new Booking(1L, LocalDateTime.of(2023, 2, 2, 12, 30),
+                    LocalDateTime.of(2023, 2, 10, 12, 30), item2, user2, Status.REJECTED);
 
         when(service.update(anyBoolean(), anyLong(), anyLong(), any())).thenReturn(booking);
         when(service.approveOrRejectBooking(anyLong(), anyBoolean(), anyLong())).thenReturn(booking);
+        when(service.approveOrRejectBooking(anyLong(), anyBoolean(), anyLong())).thenReturn(bookingRejected);
 
         mockMvc.perform(patch("/bookings/{bookingId}", 1)
                 .param("approved", approved)
-                .header(xShareUserId, userId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(booking)))
+                .header(xShareUserId, userId))
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(mapper.writeValueAsString(booking)))
             .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.status").value(status));
