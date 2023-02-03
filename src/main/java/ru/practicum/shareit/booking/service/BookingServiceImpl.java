@@ -80,10 +80,40 @@ public class BookingServiceImpl implements BookingService {
         return bookings.stream().map(Booking::getId).collect(Collectors.toList());
     }
 
+
+    @Override
+    @Transactional
+    public Booking update(Boolean isApprove, Long bookingId, Long userId, Booking booking) {
+        if (isApprove == null) {
+            if (booking.getItem().getOwner().getId() == userId) {
+                if (booking.getStart() != null) {
+                    booking.setStart(booking.getStart());
+                }
+                if (booking.getEnd() != null) {
+                    booking.setEnd(booking.getEnd());
+                }
+                if (booking.getStatus() != null) {
+                    booking.setStatus(booking.getStatus());
+                }
+                if (booking.getItem() != null) {
+                    booking.setItem(booking.getItem());
+                }
+                if (booking.getBooker() != null) {
+                    booking.setBooker(booking.getBooker());
+                }
+                return bookingRepository.save(booking);
+            } else {
+                throw new ValidationException("Вы не являетесь владельцем данной вещи");
+            }
+        } else {
+            return approveOrRejectBooking(bookingId, isApprove, userId);
+        }
+    }
+
+
     @Override
     @Transactional
     public Booking approveOrRejectBooking(Long bookingId, Boolean isApprove, Long userid) {
-        //Booking booking = getBookingById(bookingId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new NotFoundException("Такого букинга нет " + bookingId));
         if (booking.getItem().getOwner().getId() == userid) {
@@ -97,36 +127,11 @@ public class BookingServiceImpl implements BookingService {
                 booking.setStatus(Status.REJECTED);
                 return bookingRepository.save(booking);
             }
-            //return bookingRepository.save(booking);
         } else {
             throw new NotFoundException("Вы не являетесь владельцем данной вещи");
         }
     }
 
-    @Override
-    @Transactional
-    public Booking update(Long bookingId, Long userId, Booking booking) {
-        if (booking.getItem().getOwner().getId() == userId) {
-            if (booking.getStart() != null) {
-                booking.setStart(booking.getStart());
-            }
-            if (booking.getEnd() != null) {
-                booking.setEnd(booking.getEnd());
-            }
-            if (booking.getStatus() != null) {
-                booking.setStatus(booking.getStatus());
-            }
-            if (booking.getItem() != null) {
-                booking.setItem(booking.getItem());
-            }
-            if (booking.getBooker() != null) {
-                booking.setBooker(booking.getBooker());
-            }
-            return bookingRepository.save(booking);
-        } else {
-            throw new ValidationException("Вы не являетесь владельцем данной вещи");
-        }
-    }
 
     @Override
     public Booking getBookingById(Long bookingId, Long userId) {

@@ -14,6 +14,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -34,18 +35,20 @@ public class BookingController {
 
     @PostMapping
     public BookingResponse addBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                      @RequestBody BookingCreateRequest booking) {
+                                      @Valid @RequestBody BookingCreateRequest booking) {
         return mapper.toBookingDto(bookingService.addBooking(mapper.toBooking(booking), booking.getItemId(), userId));
     }
 
 
     @PatchMapping("/{bookingId}")
     public BookingResponse updateBooking(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long bookingId,
-                                         UpdateBookingDto bookingDto, @RequestParam(required = false, name = "approved") Boolean approved) {
-        if (approved != null) {
-            return mapper.toBookingDto(bookingService.approveOrRejectBooking(bookingId, approved, userId));
-        }
-        return mapper.toBookingDto(bookingService.update(bookingId, userId, mapper.toBooking(bookingDto)));
+                                          UpdateBookingDto bookingDto, @RequestParam(required = false, name = "approved")
+                                             Boolean approved) {
+            //return mapper.toBookingDto(bookingService.approveOrRejectBooking(bookingId, approved, userId));
+        Booking booking = mapper.toBooking(bookingDto);
+
+        Booking update = bookingService.update(approved, bookingId, userId, booking);
+        return mapper.toBookingDto(update);
     }
 
 
