@@ -35,7 +35,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
 
 
-    void validate(Booking booking, Long itemId) {
+    private void validate(Booking booking, Long itemId) {
         itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
         if (booking.getStart().isBefore(LocalDateTime.now())) {
             throw new ValidationException("Начало бронирования не может быть в прошлом времени");
@@ -50,6 +50,10 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new ValidationException("Эта вещь недоступна для бронирования " + item.getId());
         }
+    }
+
+    private void validateUser(Long userId) {
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
     }
 
     @Override
@@ -85,23 +89,24 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public Booking update(Boolean isApprove, Long bookingId, Long userId, Booking booking) {
         if (isApprove == null) {
-            if (booking.getItem().getOwner().getId() == userId) {
+            Booking bookingForUpdate = getBookingById(bookingId);
+            if (bookingForUpdate.getItem().getOwner().getId() == userId) {
                 if (booking.getStart() != null) {
-                    booking.setStart(booking.getStart());
+                    bookingForUpdate.setStart(booking.getStart());
                 }
                 if (booking.getEnd() != null) {
-                    booking.setEnd(booking.getEnd());
+                    bookingForUpdate.setEnd(booking.getEnd());
                 }
                 if (booking.getStatus() != null) {
-                    booking.setStatus(booking.getStatus());
+                    bookingForUpdate.setStatus(booking.getStatus());
                 }
                 if (booking.getItem() != null) {
-                    booking.setItem(booking.getItem());
+                    bookingForUpdate.setItem(booking.getItem());
                 }
                 if (booking.getBooker() != null) {
-                    booking.setBooker(booking.getBooker());
+                    bookingForUpdate.setBooker(booking.getBooker());
                 }
-                return bookingRepository.save(booking);
+                return bookingRepository.save(bookingForUpdate);
             } else {
                 throw new ValidationException("Вы не являетесь владельцем данной вещи");
             }
@@ -147,7 +152,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllUserBookings(Long userId) {
+    public List<Booking> getAllUserBookingsById(Long userId) {
         validateUser(userId);
         List<Booking> result = bookingRepository.findBookingByBookerIdOrderByStartDesc(userId);
         return result;
@@ -157,6 +162,25 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
+
+    @Override
+    public List<Booking> getAllUserBookings(Integer size, Integer from, Long userId, State state){
+        if(size != null){
+            int page = from / size;
+            final PageRequest pageRequest = PageRequest.of(page, size);
+            return getAllWithPage(pageRequest, userId);
+        } else{
+            return getBookingsByState(state, userId);
+        }
+    }
+
+
+    @Override
+    public List<Booking> getAllWithPage(PageRequest pageRequest, long userId) {
+        Page<Booking> result = bookingRepository.findBookingsByBookerIdOrderByStartDesc(pageRequest, userId);
+        return result.getContent();
+    }
+
 
     @Override
     public List<Booking> getBookingsByState(State state, Long userId) {
@@ -177,6 +201,30 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new IllegalArgumentException("Unknown state");
         }
+    }
+
+
+    @Override
+    public List<Booking> getOwnerBookings(Integer size, Integer from, Long userId, State state) {
+        if(size != null) {
+            int page = from / size;
+            final PageRequest pageRequest = PageRequest.of(page, size);
+            return getAllByOwnerWithPage(pageRequest, userId);
+        } else{
+            return getOwnerBookingsByState(state, userId);
+        }
+    }
+
+
+    @Override
+    public List<Booking> getAllByOwnerWithPage(PageRequest pageRequest, Long userId) {
+        validateUser(userId);
+        List<Long> owners = itemRepository.findAll().stream().map(item -> item.getOwner().getId()).collect(Collectors.toList());
+        if (!owners.contains(userId)) {
+            throw new NotFoundException(userId + "не является владельцем");
+        }
+        Page<Booking> result = bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(pageRequest, userId);
+        return result.getContent();
     }
 
     @Override
@@ -202,26 +250,5 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new IllegalArgumentException("Unknown state");
         }
-    }
-
-    @Override
-    public List<Booking> getAllWithPage(PageRequest pageRequest, long userId) {
-        Page<Booking> result = bookingRepository.findBookingsByBookerIdOrderByStartDesc(pageRequest, userId);
-        return result.getContent();
-    }
-
-    @Override
-    public List<Booking> getAllByOwnerWithPage(PageRequest pageRequest, Long userId) {
-        validateUser(userId);
-        List<Long> owners = itemRepository.findAll().stream().map(item -> item.getOwner().getId()).collect(Collectors.toList());
-        if (!owners.contains(userId)) {
-            throw new NotFoundException(userId + "не является владельцем");
-        }
-        Page<Booking> result = bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(pageRequest, userId);
-        return result.getContent();
-    }
-
-    private void validateUser(Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
     }
 }
