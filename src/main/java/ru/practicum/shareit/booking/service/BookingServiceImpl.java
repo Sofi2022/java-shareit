@@ -36,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     private void validate(Booking booking, Long itemId) {
-        itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
         if (booking.getStart().isBefore(LocalDateTime.now())) {
             throw new ValidationException("Начало бронирования не может быть в прошлом времени");
         }
@@ -46,7 +46,6 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getEnd().isBefore(booking.getStart())) {
             throw new ValidationException("Завершение бронирования не может быть раньше его начала");
         }
-        Item item = itemRepository.getById(itemId);
         if (!item.getAvailable()) {
             throw new ValidationException("Эта вещь недоступна для бронирования " + item.getId());
         }

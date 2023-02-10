@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.ResourceUtils;
 import ru.practicum.shareit.booking.dto.BookingCreateRequest;
@@ -83,7 +85,6 @@ class BookingControllerTest {
     private final String xShareUserId = "X-Sharer-User-Id";
 
 
-
     @BeforeEach
     void init(){
         LocalDateTime start = LocalDateTime.of(2023, 1, 26, 12, 30);
@@ -106,10 +107,13 @@ class BookingControllerTest {
                         .content(mapper.writeValueAsString(booking)))
                         .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                //.andExpect(jsonPath("$.start").value(booking.getStart()))
+                .andExpect(jsonPath("$.start").value(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(booking.getStart())))
+                .andExpect(jsonPath("$.end").value(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(booking.getEnd())))
                 .andExpect(jsonPath("$.status").value("WAITING"))
-                .andExpect(jsonPath("$.booker").value(booking.getBooker()));
-                //.andExpect(jsonPath("$.item").value(booking.getItem()));
+                .andExpect(jsonPath("$.booker").value(booking.getBooker()))
+                .andExpect(jsonPath("$.item.id").value(1));
     }
 
     @Test
@@ -166,7 +170,7 @@ class BookingControllerTest {
         Booking updatedBooking = new Booking(1L, LocalDateTime.of(2023, 1, 27, 12, 30),
                 LocalDateTime.of(2023, 1, 28, 18, 0), item, user, Status.CANCELED);
 
-        when(service.update(anyBoolean(), anyLong(), anyLong(), any())).thenReturn(updatedBooking);
+        when(service.update(any(), anyLong(), anyLong(), any())).thenReturn(updatedBooking);
 
         UpdateBookingDto update = new UpdateBookingDto();
         update.setStart(LocalDateTime.of(2023, 1, 27, 12, 30));
@@ -179,25 +183,31 @@ class BookingControllerTest {
                         .content(mapper.writeValueAsString(update)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.status").value("CANCELED"));
+                .andExpect(jsonPath("$.status").value("CANCELED"))
+                .andExpect(jsonPath("$.start").value(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(updatedBooking.getStart())))
+                .andExpect(jsonPath("$.end").value(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(updatedBooking.getEnd())))
+                .andExpect(jsonPath("$.booker").value(updatedBooking.getBooker()))
+                .andExpect(jsonPath("$.item.id").value(1));
     }
 
 
     @Test
-    void getBookingById_BookingFound() throws Exception { // booking = new Booking(1L, start, end, item, user, Status.WAITING);
+    void getBookingById_BookingFound() throws Exception {
         when(service.getBookingById(anyLong(), anyLong())).thenReturn(booking);
-
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/bookings/{bookingId}", 1)
                         .header(xShareUserId, bookingId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-//                .andExpect(jsonPath("$.start").value(booking.getStart()))
-//                .andExpect(jsonPath("$.end").value(booking.getEnd()))
-                //.andExpect(jsonPath("$.item").value(booking.getItem()))
                 .andExpect(jsonPath("$.booker").value(booking.getBooker()))
-                .andExpect(jsonPath("$.status").value("WAITING"));
+                .andExpect(jsonPath("$.status").value("WAITING"))
+                .andExpect(jsonPath("$.start").value(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(booking.getStart())))
+                .andExpect(jsonPath("$.end").value(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(booking.getEnd())))
+                .andExpect(jsonPath("$.item.id").value(1));
 
     }
 
@@ -207,8 +217,7 @@ class BookingControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/bookings/10")
                         .header(xShareUserId, 1))
-                .andExpect(status().isNotFound())
-                .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(NotFoundException.class));
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -217,41 +226,91 @@ class BookingControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/bookings/1")
                         .header(xShareUserId, 7))
-                .andExpect(status().isNotFound())
-                .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(NotFoundException.class));
+                .andExpect(status().isNotFound());
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("dataSourceGetUsersBookings")
+    void getAllUserBookings(String state, List<Booking> bookings, int listSize) throws Exception {
+        when(service.getAllUserBookings(any(), any(), any(), any())).thenReturn(bookings);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/bookings")
+                        .param("state", state)
+                        .header(xShareUserId, 3L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(listSize));
+ // весь список, 5 эл на 1 страницу придут 4?? на 1 странице 2 элемента придут 2, 2 элемента со 2ой страницы
+    }
+
+    public static Stream<Arguments> dataSourceGetUsersBookings() {
+        return Stream.of(
+                Arguments.of("ALL", getBookings(), 4),
+                Arguments.of(null, getBookings(), 4),
+                Arguments.of("REJECTED", List.of(getBookings().get(2)), 1),
+                Arguments.of("WAITING", List.of(getBookings().get(0)), 1),
+                Arguments.of("PAST", List.of(getBookings().get(1)), 1),
+                Arguments.of("CURRENT", List.of(getBookings().get(3)), 1),
+                Arguments.of("FUTURE", List.of(getBookings().get(0)), 1)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("dataSourceGetUsersWithPage")
+    void getAllUserBookingsWithPage(String from, String size, List<Booking> bookings, int listSize) throws Exception {
+        when(service.getAllWithPage(any(PageRequest.class), anyLong())).thenReturn(bookings);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/bookings")
+                .param("from",from)
+                .param("size", size)
+                .header(xShareUserId, 3L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(listSize));
+    }
+
+
+    public static Stream<Arguments> dataSourceGetUsersWithPage() {
+        List<Booking> bookings = getBookings();
+        return Stream.of(
+                Arguments.of("0", "1", List.of(bookings.get(0)), 1),
+                Arguments.of("1", "2", List.of(bookings.get(0), bookings.get(2)), 2),
+                Arguments.of("2", "3", List.of(bookings.get(0), bookings.get(2), bookings.get(3)), 3)
+        );
+    }
+
+
+    @Test
+    void getAllUserBookings_WithPage_OneOnPage() throws Exception {
+        List<Booking> bookings = getBookings();
+        PageRequest request = PageRequest.of(0,1);
+
+        List<Booking> result = List.of(bookings.get(0));
+        when(service.getAllWithPage(request, 3L)).thenReturn(result);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/bookings")
+                        .param("from","0")
+                        .param("size", "1")
+                        .header(xShareUserId, 3L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1));
     }
 
 
 
     @ParameterizedTest
-    @MethodSource("dataSourceGetUsers")
-    void getAllUserBookings(String state, Integer from, Integer size) throws Exception {
-        when(service.getAllUserBookings(anyInt(), anyInt(), anyLong(), any(State.class))).thenReturn(List.of(booking));
+    @MethodSource("dataSourceGetUsersBookings")
+    void getAllOwnerBookings(String state, List<Booking> bookings, int listSize) throws Exception {
+        when(service.getOwnerBookings(any(), any(), any(), any())).thenReturn(bookings);
 
-        User user3 = new User(3, "Вера", "Vera1998@ya.ru");
-        Item item3 = new Item(3, "Платье", "Вечернее платье", true, user3, new HashSet<>(), null);
-        Booking booking2 = new Booking(1L, LocalDateTime.of(2023, 2, 2, 12, 30, 0),
-                LocalDateTime.of(2023, 2, 10, 12, 30), item3, user3, Status.REJECTED);
-
-//        mockMvc.perform(MockMvcRequestBuilders.get("/bookings")
-//                        .param("state", state)
-//                        .header(xShareUserId, userId))
-//                .andExpect(status().isOk())
-
-
-
+        mockMvc.perform(MockMvcRequestBuilders.get("/bookings/owner")
+                        .param("state", state)
+                        .header(xShareUserId, 3L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(listSize));
     }
 
-//    public static Stream<Arguments> dataSourceGetUsers() {
-//        return Stream.of(
-//                Arguments.of("ALL", )
-//        )
-//    }
 
 
-    @Test
-    void getOwnerBooking() {
-    }
 
     private String getContentFromFile(final String filename) {
         try {
@@ -272,12 +331,30 @@ class BookingControllerTest {
         return item;
     }
 
-    private User createUser(String name, String email){
-        long id = 1;
+    private User createUser(Long id, String name, String email){
         User user = new User();
         user.setId(id);
         user.setName(name);
         user.setEmail(email);
         return user;
+    }
+
+    private static Booking makeBookingWithState(Status status, Item item, User user){
+        Booking booking2 = new Booking(1L, LocalDateTime.of(2023, 2, 2, 12, 30, 0),
+                LocalDateTime.of(2023, 2, 10, 12, 30), item, user, null);
+        booking2.setStatus(status);
+        return booking2;
+    }
+
+    private static List<Booking> getBookings(){
+        User user3 = new User(3, "Вера", "Vera1998@ya.ru");
+        Item item3 = new Item(3, "Платье", "Вечернее платье", true, user3, new HashSet<>(), null);
+
+        return List.of(
+                makeBookingWithState(Status.WAITING, item3, user3),
+                makeBookingWithState(Status.APPROVED, item3, user3),
+                makeBookingWithState(Status.REJECTED, item3, user3),
+                makeBookingWithState(Status.CANCELED, item3, user3)
+        );
     }
 }
