@@ -12,8 +12,6 @@ public interface BookingService {
 
     Booking getBookingById(Long bookingId);
 
-    List<Long> getBookingIds();
-
     Booking approveOrRejectBooking(Long bookingId, Boolean isApprove, Long userId);
 
     Booking update(Boolean isApprove, Long bookingId, Long userId, Booking booking);

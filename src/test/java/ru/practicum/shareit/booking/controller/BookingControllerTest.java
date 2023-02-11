@@ -1,32 +1,24 @@
 package ru.practicum.shareit.booking.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.*;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.ResourceUtils;
 import ru.practicum.shareit.booking.dto.BookingCreateRequest;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.dto.UpdateBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
-import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentMapper;
@@ -39,13 +31,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static java.lang.reflect.Array.get;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -240,7 +229,6 @@ class BookingControllerTest {
                         .header(xShareUserId, 3L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(listSize));
- // весь список, 5 эл на 1 страницу придут 4?? на 1 странице 2 элемента придут 2, 2 элемента со 2ой страницы
     }
 
     public static Stream<Arguments> dataSourceGetUsersBookings() {
@@ -258,7 +246,7 @@ class BookingControllerTest {
     @ParameterizedTest
     @MethodSource("dataSourceGetUsersWithPage")
     void getAllUserBookingsWithPage(String from, String size, List<Booking> bookings, int listSize) throws Exception {
-        when(service.getAllWithPage(any(PageRequest.class), anyLong())).thenReturn(bookings);
+        when(service.getAllUserBookings(any(), any(), any(), any())).thenReturn(bookings);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/bookings")
                 .param("from",from)
@@ -279,24 +267,6 @@ class BookingControllerTest {
     }
 
 
-    @Test
-    void getAllUserBookings_WithPage_OneOnPage() throws Exception {
-        List<Booking> bookings = getBookings();
-        PageRequest request = PageRequest.of(0,1);
-
-        List<Booking> result = List.of(bookings.get(0));
-        when(service.getAllWithPage(request, 3L)).thenReturn(result);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/bookings")
-                        .param("from","0")
-                        .param("size", "1")
-                        .header(xShareUserId, 3L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
-    }
-
-
-
     @ParameterizedTest
     @MethodSource("dataSourceGetUsersBookings")
     void getAllOwnerBookings(String state, List<Booking> bookings, int listSize) throws Exception {
@@ -310,6 +280,18 @@ class BookingControllerTest {
     }
 
 
+    @ParameterizedTest
+    @MethodSource("dataSourceGetUsersWithPage")
+    void getAllOwnerBookings_WithPage(String from, String size, List<Booking> bookings, int listSize) throws Exception {
+        when(service.getOwnerBookings(any(), any(), any(), any())).thenReturn(bookings);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/bookings/owner")
+                        .param("from",from)
+                        .param("size", size)
+                        .header(xShareUserId, 3L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(listSize));
+    }
 
 
     private String getContentFromFile(final String filename) {
@@ -321,23 +303,6 @@ class BookingControllerTest {
         }
     }
 
-    private Item createItem(String name, String description, boolean available, User owner){
-        long id = 1;
-        Item item = new Item();
-        item.setId(++id);
-        item.setDescription(description);
-        item.setAvailable(available);
-        item.setOwner(owner);
-        return item;
-    }
-
-    private User createUser(Long id, String name, String email){
-        User user = new User();
-        user.setId(id);
-        user.setName(name);
-        user.setEmail(email);
-        return user;
-    }
 
     private static Booking makeBookingWithState(Status status, Item item, User user){
         Booking booking2 = new Booking(1L, LocalDateTime.of(2023, 2, 2, 12, 30, 0),

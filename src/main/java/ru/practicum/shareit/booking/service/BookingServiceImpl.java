@@ -77,11 +77,11 @@ public class BookingServiceImpl implements BookingService {
                 + bookingId));
     }
 
-    @Override
-    public List<Long> getBookingIds() {
-        List<Booking> bookings = bookingRepository.findAll();
-        return bookings.stream().map(Booking::getId).collect(Collectors.toList());
-    }
+
+//    private List<Long> getBookingIds() {
+//        List<Booking> bookings = bookingRepository.findAll();
+//        return bookings.stream().map(Booking::getId).collect(Collectors.toList());
+//    }
 
 
     @Override
