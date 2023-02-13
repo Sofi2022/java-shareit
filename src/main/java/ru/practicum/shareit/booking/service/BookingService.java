@@ -10,8 +10,6 @@ public interface BookingService {
 
     Booking addBooking(Booking booking, Long itemId, Long userId);
 
-    Booking getBookingById(Long bookingId);
-
     Booking approveOrRejectBooking(Long bookingId, Boolean isApprove, Long userId);
 
     Booking update(Boolean isApprove, Long bookingId, Long userId, Booking booking);

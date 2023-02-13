@@ -71,24 +71,13 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.save(booking);
     }
 
-    @Override
-    public Booking getBookingById(Long bookingId) {
-        return bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Такого букинга нет "
-                + bookingId));
-    }
-
-
-//    private List<Long> getBookingIds() {
-//        List<Booking> bookings = bookingRepository.findAll();
-//        return bookings.stream().map(Booking::getId).collect(Collectors.toList());
-//    }
-
 
     @Override
     @Transactional
     public Booking update(Boolean isApprove, Long bookingId, Long userId, Booking booking) {
         if (isApprove == null) {
-            Booking bookingForUpdate = getBookingById(bookingId);
+            Booking bookingForUpdate = bookingRepository.findById(bookingId).orElseThrow(()
+                    -> new NotFoundException("Такого букинга нет " + bookingId));
             if (bookingForUpdate.getItem().getOwner().getId() == userId) {
                 if (booking.getStart() != null) {
                     bookingForUpdate.setStart(booking.getStart());
