@@ -52,7 +52,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void validateUser_Ok(){
+    void validateUser_Ok() {
         User user = new User();
         user.setName("ValidName");
         user.setEmail("ValidEmail@yandex.ru");
@@ -60,7 +60,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void validateUser_Fail(){
+    void validateUser_Fail() {
         User user = new User();
         user.setName("ValidName");
         user.setEmail("ValidEmail@yandex.ru");
@@ -96,6 +96,49 @@ class UserServiceImplTest {
         assertEquals("name update", savedUser.getName());
         assertEquals("emailUpdated@yandex.ru", savedUser.getEmail());
     }
+
+
+    @Test
+    void updateUserNameWhenUser_Found() {
+        long userId = 1L;
+        User oldUser = new User(1L, "name", "email@yandex.ru");
+
+        User newUser = new User(1L, "name update",null);
+
+        User expectedUser = new User(1L, "name update", "email@yandex.ru");
+
+        when(userRepository.findAll()).thenReturn(List.of(oldUser));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(oldUser));
+
+
+        userService.updateUser(userId, newUser);
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User savedUser = userArgumentCaptor.getValue();
+
+        assertEquals(expectedUser, savedUser);
+    }
+
+
+    @Test
+    void updateUserEmailWhenUser_Found() {
+        long userId = 1L;
+        User oldUser = new User(1L, "name", "email@yandex.ru");
+
+        User newUser = new User(1L, null,"emailUpdate@yandex.ru");
+
+        User expectedUser = new User(1L, "name", "emailUpdate@yandex.ru");
+
+        when(userRepository.findAll()).thenReturn(List.of(oldUser));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(oldUser));
+
+
+        userService.updateUser(userId, newUser);
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User savedUser = userArgumentCaptor.getValue();
+
+        assertEquals(expectedUser, savedUser);
+    }
+
 
     @Test
     void updateUserWhenUser_NotFound() {

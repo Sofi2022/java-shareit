@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.dto.ShortItemRequest;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -16,7 +15,6 @@ import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,19 +24,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ItemRequestImpl implements RequestService{
+public class ItemRequestImpl implements RequestService {
 
     private final RequestRepository repository;
     private final UserRepository userRepository;
-
-    private final ItemRepository itemRepository;
-
     private final ItemService itemService;
-
-    private final UserService userService;
-
     private final ItemRequestMapper mapper;
-
     private final ItemMapper itemMapper;
 
 
@@ -53,10 +44,12 @@ public class ItemRequestImpl implements RequestService{
 
     @Override
     public List<ShortItemRequest> getItemRequests(Long userId) {
-        User user = userService.getUserById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя нет "
+                + userId));
         List<ItemRequest> itemRequests =
                 repository.findAllByRequestor(user);
-        if(itemRequests.size() == 0){
+        if (itemRequests.size() == 0) {
             List<ItemRequest> result = new ArrayList<>();
             return mapper.toShortList(result);
         }
@@ -77,7 +70,8 @@ public class ItemRequestImpl implements RequestService{
 
     @Override
     public List<ShortItemRequest> getAllRequests(Long userId) {
-        return mapper.toShortList(repository.getItemRequestByUserId(userId));
+        List<ItemRequest> result = repository.getItemRequestByUserId(userId);
+        return mapper.toShortList(result);
     }
 
     @Override
@@ -86,13 +80,15 @@ public class ItemRequestImpl implements RequestService{
         return result.getContent();
     }
 
-    private User validateUser(Long userId){
-        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
+    private User validateUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
     }
 
     @Override
     public ShortItemRequest getById(long userId, long requestId) {
         validateUser(userId);
-        return mapper.toShortRequest(repository.findById(requestId).orElseThrow(() -> new NotFoundException("Такого запроса нет " + requestId)));
+        return mapper.toShortRequest(repository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("Такого запроса нет " + requestId)));
     }
 }

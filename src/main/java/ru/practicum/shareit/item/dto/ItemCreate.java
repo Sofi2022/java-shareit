@@ -2,8 +2,8 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +12,8 @@ import javax.validation.constraints.NotNull;
 @Valid
 @Data
 @AllArgsConstructor
-public class ItemCreateRequest {
+@NoArgsConstructor
+public class ItemCreate {
 
     private long id;
 

@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.ResourceUtils;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -18,12 +19,15 @@ import ru.practicum.shareit.user.service.UserService;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @AutoConfigureMockMvc
@@ -42,18 +46,26 @@ class UserControllerTest {
     private static final String PATH = "/users";
 
     @Test
-    void getUsers() {
-
-        var user = new User();
+    void getUsers() throws Exception {
+        User user = new User();
         user.setId(1);
         user.setName("UserTest");
         user.setEmail("UserTest@email.ru");
-        when(userService.getUsers()).thenReturn(List.of(user));
 
-        var result = userService.getUsers();
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        users.add(new User(2L, "newUser", "NewUser123@mail.ru"));
 
-        assertNotNull(result);
-        assertEquals(user.getId(), result.get(0).getId());
+        when(userService.getUsers()).thenReturn(users);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+
+        //var result = userService.getUsers();
+
+//        assertNotNull(result);
+//        assertEquals(user.getId(), result.get(0).getId());
     }
 
     @Test
@@ -82,29 +94,29 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserById_WhenUserFound() {
-        long userId = 0;
-        User expectedUser = new User();
-        when(userService.getUserById(userId)).thenReturn(expectedUser);
-
-        User actualUser = userService.getUserById(userId);
-        assertEquals(expectedUser, actualUser);
+    void getUserById_WhenUserNotFound() throws Exception {
+        long wrongId = 10L;
+        when(userService.getUserById(anyLong())).thenThrow(new ValidationException("Unknown userId:" + wrongId));
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/10L"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void getUserById_WhenUserNotFound() {
-        long userId = 0;
-        User expectedUser = new User();
-        when(userService.getUserById(userId)).thenReturn(expectedUser);
+    void getUserById_WhenUserFound() throws Exception {
+        User expectedUser = new User(1L, "Olya", "Olya123@mail.ru");
+        when(userService.getUserById(anyLong())).thenReturn(expectedUser);
 
-
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/{userId}", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(expectedUser.getId()))
+                .andExpect(jsonPath("$.name").value("Olya"))
+                .andExpect(jsonPath("$.email").value("Olya123@mail.ru"));
     }
 
     @Test
-    void deleteUserById() {
-        User user = new User(1, "UserTestUpdate", "UserTest@email.ru");
-        userService.deleteUserById(1);
-
+    void deleteUserById() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/{userId}", 1))
+                .andExpect(status().isOk());
         verify(userService, Mockito.times(1)).deleteUserById(1);
     }
 

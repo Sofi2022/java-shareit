@@ -16,17 +16,12 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.model.Status.APPROVED;
@@ -37,7 +32,6 @@ import static ru.practicum.shareit.booking.model.Status.APPROVED;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
-    private final UserService userService;
 
     private final UserRepository userRepository;
 
@@ -49,13 +43,11 @@ public class ItemServiceImpl implements ItemService {
 
     private final BookingMapper bookingMapper;
 
-    private final RequestRepository requestRepository;
-
 
     @Override
     @Transactional
     public Item addItem(Item item, Long userId) {
-            if(item.getRequest().getId() == 0) {
+            if (item.getRequest() == null || item.getRequest().getId() == 0) {
                 item.setRequest(null);
             }
             item.setOwner(userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId)));
@@ -65,37 +57,41 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public Item updateItem(Item item, Long itemId, Long userId) {
-        Item newItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
-        if (newItem.getOwner().getId() == userId) {
+        validateUser(userId);
+        Item actualItem = getById(itemId);
+        if (actualItem.getOwner().getId() == userId) {
             if (item.getName() != null) {
-                newItem.setName(item.getName());
+                actualItem.setName(item.getName());
             }
             if (item.getDescription() != null) {
-                newItem.setDescription(item.getDescription());
+                actualItem.setDescription(item.getDescription());
             }
             if (item.getAvailable() != null) {
-                newItem.setAvailable(item.getAvailable());
+                actualItem.setAvailable(item.getAvailable());
             }
             if (item.getOwner() != null) {
-                newItem.setOwner(item.getOwner());
+                actualItem.setOwner(item.getOwner());
             }
-            return itemRepository.save(newItem);
+            return itemRepository.save(actualItem);
         } else {
             throw new NotFoundException("Вы не имеете права обновить объект");
         }
     }
 
+    //        List<Long> itemsIds = itemRepository.getItemsIds();
+//        if (!(itemsIds.contains(itemId))) {
+//            throw new NotFoundException("Такой вещи нет " + itemId);
+//        }
+    //getById(itemId);
+
     @Override
     public ItemResponseWithBooking getItemById(Long userId, Long itemId) {
-        List<Long> itemsIds = itemRepository.getItemsIds();
-        if (!(itemsIds.contains(itemId))) {
-            throw new NotFoundException("Такой вещи нет " + itemId);
-        }
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
         if (!(item.getOwner().getId() == userId)) {
-            return mapper.toItemWithBooking(item, null, null);
+            return mapper.toItemWithNullBooking(item, null, null);
         }
-        List<Booking> lastBookings = bookingRepository.findLastBookingsByItemIdOrderByStartDesc(itemId, LocalDateTime.now());
+        List<Booking> lastBookings = bookingRepository.findLastBookingsByItemIdOrderByStartDesc(itemId,
+                LocalDateTime.now().withNano(0));
         ShortBookingDto lastBookingShort;
         if (lastBookings.isEmpty()) {
             lastBookingShort = null;
@@ -103,14 +99,18 @@ public class ItemServiceImpl implements ItemService {
             lastBookingShort = bookingMapper.toShortBooking(lastBookings.get(0));
         }
 
-        List<Booking> nextBookings = bookingRepository.findNextBookingsByItemIdOrderByStartAsc(itemId, LocalDateTime.now());
+        List<Booking> nextBookings = bookingRepository.findNextBookingsByItemIdOrderByStartAsc(itemId,
+                LocalDateTime.now().withNano(0));
         ShortBookingDto nextBookingShort;
         if (nextBookings.isEmpty()) {
             nextBookingShort = null;
         } else {
             nextBookingShort = bookingMapper.toShortBooking(nextBookings.get(0));
         }
-        return mapper.toItemWithBooking(item, lastBookingShort, nextBookingShort);
+        if (lastBookingShort == null || nextBookingShort == null) {
+            return mapper.toItemWithNullBooking(item, lastBookingShort, nextBookingShort);
+        }
+            return mapper.toItemWithBooking(item, lastBookingShort, nextBookingShort);
     }
 
     @Override
@@ -152,4 +152,15 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> findAllByRequestIds(List<Integer> ids) {
         return itemRepository.findAllByRequestIds(ids);
     }
+
+    @Override
+    public Item getById(Long itemId) {
+        return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
+    }
+
+    private void validateUser(Long userId) {
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет "
+                + userId));
+    }
 }
+

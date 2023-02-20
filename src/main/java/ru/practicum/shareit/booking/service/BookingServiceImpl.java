@@ -152,12 +152,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllUserBookings(Integer size, Integer from, Long userId, State state){
-        if(size != null){
+    public List<Booking> getAllUserBookings(Integer size, Integer from, Long userId, State state) {
+        if (size != null) {
             int page = from / size;
             final PageRequest pageRequest = PageRequest.of(page, size);
             return getAllWithPage(pageRequest, userId);
-        } else{
+        } else {
             return getBookingsByState(state, userId);
         }
     }
@@ -177,15 +177,15 @@ public class BookingServiceImpl implements BookingService {
             case ALL:
                 return bookingRepository.findBookingByBookerIdOrderByStartDesc(userId);
             case FUTURE:
-                return bookingRepository.findFutureByBooker(userId, LocalDateTime.now());
+                return bookingRepository.findFutureByBooker(userId, LocalDateTime.now().withNano(0));
             case PAST:
-                return bookingRepository.findPastByBooker(userId, LocalDateTime.now());
+                return bookingRepository.findPastByBooker(userId, LocalDateTime.now().withNano(0));
             case WAITING:
                 return bookingRepository.findUserBookingsWaitingState(userId);
             case REJECTED:
                 return bookingRepository.findUserBookingsRejectedState(userId);
             case CURRENT:
-                return bookingRepository.findUserBookingsCurrentState(userId, LocalDateTime.now());
+                return bookingRepository.findUserBookingsCurrentState(userId, LocalDateTime.now().withNano(0));
             default:
                 throw new IllegalArgumentException("Unknown state");
         }
@@ -194,11 +194,16 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getOwnerBookings(Integer size, Integer from, Long userId, State state) {
-        if(size != null) {
+        validateUser(userId);
+        List<Long> owners = itemRepository.findAll().stream().map(item -> item.getOwner().getId()).collect(Collectors.toList());
+        if (!owners.contains(userId)) {
+            throw new NotFoundException(userId + " не является владельцем");
+        }
+        if (size != null) {
             int page = from / size;
             final PageRequest pageRequest = PageRequest.of(page, size);
             return getAllByOwnerWithPage(pageRequest, userId);
-        } else{
+        } else {
             return getOwnerBookingsByState(state, userId);
         }
     }
@@ -206,35 +211,24 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllByOwnerWithPage(PageRequest pageRequest, Long userId) {
-        validateUser(userId);
-        List<Long> owners = itemRepository.findAll().stream().map(item -> item.getOwner().getId()).collect(Collectors.toList());
-        if (!owners.contains(userId)) {
-            throw new NotFoundException(userId + "не является владельцем");
-        }
         Page<Booking> result = bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(pageRequest, userId);
         return result.getContent();
     }
 
     @Override
     public List<Booking> getOwnerBookingsByState(State state, Long userId) {
-        validateUser(userId);
-        List<Long> owners = itemRepository.findAll().stream().map(item -> item.getOwner().getId()).collect(Collectors.toList());
-        if (!owners.contains(userId)) {
-            throw new NotFoundException(userId + "не является владельцем");
-        }
-
         switch (state) {
             case ALL:
                 return bookingRepository.findAllByOwnerIdOrderByStartDesc(userId);
             case FUTURE:
-                return bookingRepository.findFutureByOwnerId(userId, LocalDateTime.now());
+                return bookingRepository.findFutureByOwnerId(userId, LocalDateTime.now().withNano(0));
             case PAST:
-                return bookingRepository.findPastByOwnerId(userId, LocalDateTime.now());
+                return bookingRepository.findPastByOwnerId(userId, LocalDateTime.now().withNano(0));
             case WAITING:
             case REJECTED:
                 return bookingRepository.findAllBookingsByOwnerIdAndStateIgnoreCase(Status.valueOf(state.name()), userId);
             case CURRENT:
-                return bookingRepository.findCurrentByOwnerId(userId, LocalDateTime.now());
+                return bookingRepository.findCurrentByOwnerId(userId, LocalDateTime.now().withNano(0));
             default:
                 throw new IllegalArgumentException("Unknown state");
         }

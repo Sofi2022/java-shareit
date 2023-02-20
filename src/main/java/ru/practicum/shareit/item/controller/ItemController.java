@@ -18,15 +18,14 @@ public class ItemController {
 
     private final ItemService itemService;
     private final ItemMapper mapper;
-
     private final CommentMapper commentMapper;
 
     @PostMapping
     public ItemResponse addItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                @Valid @RequestBody ItemCreateRequest itemCreateRequest) {
-        System.out.println("Create: " + itemCreateRequest);
-        System.out.println("Item: " + mapper.toItem(itemCreateRequest, userId));
-        return mapper.toItemDto(itemService.addItem(mapper.toItem(itemCreateRequest, userId), userId));
+                                @Valid @RequestBody ItemCreate itemCreate) {
+        System.out.println("Create: " + itemCreate);
+        System.out.println("Item: " + mapper.toItem(itemCreate, userId));
+        return mapper.toItemDto(itemService.addItem(mapper.toItem(itemCreate, userId), userId));
     }
 
     @PatchMapping("/{itemId}")

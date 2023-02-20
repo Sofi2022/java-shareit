@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Valid
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

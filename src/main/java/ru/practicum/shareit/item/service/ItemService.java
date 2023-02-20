@@ -6,6 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
+
 public interface ItemService {
 
     Item addItem(Item item, Long userId);
@@ -21,4 +22,6 @@ public interface ItemService {
     Comment addComment(Long userId, Long itemId, Comment comment);
 
     List<Item> findAllByRequestIds(List<Integer> ids);
+
+    Item getById(Long itemId);
 }

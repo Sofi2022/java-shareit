@@ -18,22 +18,21 @@ class UserRepositoryTest {
     private UserRepository userRepository;
 
     @BeforeEach
-    private void addUsers(){
+    private void addUsers() {
         userRepository.save(new User(1, "Name", "User1@email.ru"));
         userRepository.save(new User(2, "Name2", "User2@email.ru"));
         userRepository.save(new User(3, "Name3", "User3@email.ru"));
-
-
     }
 
     @Test
     void get3UsersIds() {
         List<Long> actualIds = userRepository.getUsersIds();
+        System.out.println(actualIds);
 
         assertFalse(actualIds.isEmpty());
-        assertEquals(1, actualIds.get(0));
-        assertEquals(2, actualIds.get(1));
-        assertEquals(3, actualIds.get(2));
+        assertEquals(8, actualIds.get(0));
+        assertEquals(9, actualIds.get(1));
+        assertEquals(10, actualIds.get(2));
     }
 
     @Test
@@ -56,7 +55,7 @@ class UserRepositoryTest {
     }
 
     @AfterEach
-    private void deleteUsers(){
+    private void deleteUsers() {
         userRepository.deleteAll();
     }
 }

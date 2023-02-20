@@ -12,8 +12,10 @@ import java.util.Set;
 
 @Getter
 @Setter
-//@AllArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+//@RequiredArgsConstructor
 @Entity
 @Table(name = "requests")
 public class ItemRequest {

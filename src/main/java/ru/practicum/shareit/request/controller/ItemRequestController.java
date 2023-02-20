@@ -30,28 +30,26 @@ public class ItemRequestController {
     private final ItemRequestImpl service;
 
     @PostMapping
-    public ItemRequestDto addRequest(@RequestHeader("X-Sharer-User-Id") long userId,  @Valid @RequestBody ItemCreateRequest request){
-        System.out.println("create.json: " + request);
+    public ItemRequestDto addRequest(@RequestHeader("X-Sharer-User-Id") long userId,
+                                     @Valid @RequestBody ItemCreateRequest request) {
         ItemRequest request1 = mapper.toItemRequest(request, userId);
-        System.out.println("1: " + request1);
         ItemRequest request2 = service.addRequest(userId, request1);
-        System.out.println("2: " + request2);
         return mapper.toDto(request2);
         //return mapper.toDto(service.addRequest(userId, mapper.toItemRequest(request, userId)));
     }
 
     @GetMapping
-    public List<ShortItemRequest> getRequests(@RequestHeader("X-Sharer-User-Id") long userId){
+    public List<ShortItemRequest> getRequests(@RequestHeader("X-Sharer-User-Id") long userId) {
         return service.getItemRequests(userId);
     }
 
     @GetMapping("/all")
     public List<ShortItemRequest> getAllRequests(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                    @PositiveOrZero @RequestParam(name = "from", defaultValue = "0",
+                                                    @PositiveOrZero @RequestParam (name = "from", defaultValue = "0",
                                                     required = false) @Min(0) Integer from,
-                                                    @RequestParam(name = "size", required = false) @Min(1) Integer size){
+                                                    @RequestParam(name = "size", required = false) @Min(1) Integer size) {
         log.info("Вызван метод get all");
-        if(size != null){
+        if (size != null) {
             log.info("Вызван метод get all with paginating");
             int page = from / size;
             final PageRequest pageRequest = PageRequest.of(page, size);
@@ -62,7 +60,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("/{requestId}")
-    public ShortItemRequest getRequestById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long requestId){
+    public ShortItemRequest getRequestById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long requestId) {
         return service.getById(userId, requestId);
     }
 }

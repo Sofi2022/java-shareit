@@ -75,7 +75,7 @@ class BookingControllerTest {
 
 
     @BeforeEach
-    void init(){
+    void init() {
         LocalDateTime start = LocalDateTime.of(2023, 1, 26, 12, 30);
         LocalDateTime end = LocalDateTime.of(2023, 1, 26, 18, 0);
         owner = new User(1, "Olga", "Olga123@mail.ru");
@@ -128,7 +128,7 @@ class BookingControllerTest {
                 LocalDateTime.of(2023, 2, 10, 12, 30), item2, user2, Status.REJECTED);
 
         User user3 = new User(3, "Сввета", "Sv1998@ya.ru");
-        Item item3 = new Item(3, "Карандащ", "Цветной", true, user3, new HashSet<>(), null);
+        Item item3 = new Item(3, "Карандаш", "Цветной", true, user3, new HashSet<>(), null);
         Booking bookingApproved = new Booking(1L, LocalDateTime.of(2023, 2, 2, 12, 30),
                 LocalDateTime.of(2023, 2, 10, 12, 30), item2, user2, Status.APPROVED);
 
@@ -163,7 +163,7 @@ class BookingControllerTest {
 
         UpdateBookingDto update = new UpdateBookingDto();
         update.setStart(LocalDateTime.of(2023, 1, 27, 12, 30));
-        update.setEnd( LocalDateTime.of(2023, 1, 28, 18, 0));
+        update.setEnd(LocalDateTime.of(2023, 1, 28, 18, 0));
         update.setStatus(Status.CANCELED);
 
         mockMvc.perform(patch("/bookings/{bookingId}", 1)
@@ -304,14 +304,14 @@ class BookingControllerTest {
     }
 
 
-    private static Booking makeBookingWithState(Status status, Item item, User user){
+    private static Booking makeBookingWithState(Status status, Item item, User user) {
         Booking booking2 = new Booking(1L, LocalDateTime.of(2023, 2, 2, 12, 30, 0),
                 LocalDateTime.of(2023, 2, 10, 12, 30), item, user, null);
         booking2.setStatus(status);
         return booking2;
     }
 
-    private static List<Booking> getBookings(){
+    private static List<Booking> getBookings() {
         User user3 = new User(3, "Вера", "Vera1998@ya.ru");
         Item item3 = new Item(3, "Платье", "Вечернее платье", true, user3, new HashSet<>(), null);
 
