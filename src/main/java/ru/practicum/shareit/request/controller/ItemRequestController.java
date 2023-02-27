@@ -32,21 +32,21 @@ public class ItemRequestController {
     @PostMapping
     public ItemRequestDto addRequest(@RequestHeader("X-Sharer-User-Id") long userId,
                                      @Valid @RequestBody ItemCreateRequest request) {
+        log.info("Вызван метод addRequest");
         ItemRequest request1 = mapper.toItemRequest(request, userId);
         ItemRequest request2 = service.addRequest(userId, request1);
         return mapper.toDto(request2);
-        //return mapper.toDto(service.addRequest(userId, mapper.toItemRequest(request, userId)));
     }
 
     @GetMapping
     public List<ShortItemRequest> getRequests(@RequestHeader("X-Sharer-User-Id") long userId) {
+        log.info("Вызван метод getRequests");
         return service.getItemRequests(userId);
     }
 
     @GetMapping("/all")
     public List<ShortItemRequest> getAllRequests(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                    @PositiveOrZero @RequestParam (name = "from", defaultValue = "0",
-                                                    required = false) @Min(0) Integer from,
+                                                    @PositiveOrZero @RequestParam (name = "from", defaultValue = "0") Integer from,
                                                     @RequestParam(name = "size", required = false) @Min(1) Integer size) {
         log.info("Вызван метод get all");
         if (size != null) {
@@ -61,6 +61,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     public ShortItemRequest getRequestById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long requestId) {
+        log.info("Вызван метод getRequestById");
         return service.getById(userId, requestId);
     }
 }
