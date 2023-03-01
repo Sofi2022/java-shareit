@@ -1,42 +1,44 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.AlreadyExists;
-import ru.practicum.shareit.exceptions.NotFoundException;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.AlreadyExists;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.validation.ValidationException;
 import java.util.List;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+
     @Override
     public void validate(User user) {
-        List<User> users = userRepository.getAllUsers();
+        List<User> users = userRepository.findAll();
         if (users.contains(user)) {
             throw new AlreadyExists("Такой пользователь уже существует " + user);
         }
-        boolean match = users.stream().map(User::getEmail).anyMatch((value) -> value.equals(user.getEmail()));
-        if (match) {
-            throw new ValidationException("Такой email уже есть " + user.getEmail());
-        }
     }
 
+    @Transactional
     @Override
     public User addUser(User user) {
         validate(user);
-        return userRepository.saveUser(user);
+        return userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public User updateUser(long userId, User user) {
         validate(user);
@@ -47,29 +49,25 @@ public class UserServiceImpl implements UserService {
         if (user.getEmail() != null) {
             newUser.setEmail(user.getEmail());
         }
-        userRepository.updateUser(userId, newUser);
+        userRepository.save(newUser);
         return getUserById(userId);
     }
 
     @Override
     public User getUserById(long userId) {
-        List<Long> userIds = userRepository.getUsersIds();
-        if (userIds.contains(userId)) {
-            return userRepository.getUserById(userId);
-        } else {
-            throw new NotFoundException("Такого пользователя нет " + userId);
-        }
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
     }
 
+    @Transactional
     @Override
     public void deleteUserById(long userId) {
         getUserById(userId);
-        userRepository.deleteUserById(userId);
+        userRepository.deleteById(userId);
     }
 
     @Override
     public List<User> getUsers() {
-        return userRepository.getAllUsers();
+        return userRepository.findAll();
     }
 
     @Override

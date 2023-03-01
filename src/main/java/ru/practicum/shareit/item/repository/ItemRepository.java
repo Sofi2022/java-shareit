@@ -1,22 +1,31 @@
 package ru.practicum.shareit.item.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface ItemRepository {
+@Repository
+public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    Item addItem(Item item);
-
-    Item updateItem(Item item);
-
-    Item getItemById(Long itemId);
-
+    @Query(value = "select i.id from Item i")
     List<Long> getItemsIds();
 
-    List<Item> getItems();
-
+    @Query(value = "select i from Item i where i.owner.id = ?1")
     List<Item> getUserItems(Long userId);
 
-    List<Item> searchByName(String text);
+    List<Item> findByNameOrDescriptionContainingIgnoreCase(String text1, String text2);
+
+    @Query(value = "select i from Item i where i.request.id = :requestId")
+    List<Item> findItemByRequestId(@Param("requestId") Integer requestId);
+
+    @Query(value = "select i from Item i where i.request.id = :requestIds")
+    List<Item> findAllByRequestIds(@Param("requestIds") List<Integer> requestIds);
+
+    @Query("select i from Item i where i.id = :itemId")
+    Optional<Item> findById(@Param("itemId") Long itemId);
 }
