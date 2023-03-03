@@ -3,20 +3,9 @@ package ru.practicum.shareit.request.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-//import ru.practicum.shareit.request.dto.ShortItemRequest;
-//import ru.practicum.shareit.request.model.ItemRequest;
-//import ru.practicum.shareit.request.dto.ItemCreateRequest;
-//import ru.practicum.shareit.request.dto.ItemRequestDto;
-//import ru.practicum.shareit.request.mapper.ItemRequestMapper;
-//import ru.practicum.shareit.request.service.ItemRequestImpl;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.PositiveOrZero;
-import java.util.List;
 
 @RestController
 @RequestMapping("/requests")

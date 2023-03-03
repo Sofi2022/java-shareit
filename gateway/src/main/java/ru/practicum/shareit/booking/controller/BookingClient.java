@@ -17,8 +17,8 @@ public class BookingClient extends BaseClient {
 
     public BookingClient(@Value("http://localhost:8080") String serverUrl, RestTemplateBuilder builder) {
         super(
-                builder.
-                        uriTemplateHandler( new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
+                builder
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );

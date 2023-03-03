@@ -5,13 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreateRequest;
-import ru.practicum.shareit.booking.dto.BookingResponse;
-import ru.practicum.shareit.booking.dto.UpdateBookingDto;
-//import ru.practicum.shareit.booking.model.State;
-//import ru.practicum.shareit.booking.service.BookingService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -19,8 +12,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BookingController {
 
-
-    //private final BookingService bookingService;
 
     private final BookingClient bookingClient;
 
