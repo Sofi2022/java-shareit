@@ -31,7 +31,9 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<Object> updateUser(long userId, UpdateUserDto userDto) {
-        return patch("", userId, userDto);
+//        String path = "/" + userId;
+//        System.out.println(path);
+        return patch("/" + userId, userDto);
     }
 
     public ResponseEntity<Object> getUserById(long userId) {

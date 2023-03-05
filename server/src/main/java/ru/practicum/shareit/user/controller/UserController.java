@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
-    //@Autowired
     private final UserService userService;
 
     @PostMapping
