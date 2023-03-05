@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -13,9 +14,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/users")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
+    //@Autowired
     private final UserService userService;
 
     @PostMapping

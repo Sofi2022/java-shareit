@@ -1,8 +1,7 @@
-package ru.practicum.shareit.item.controller;
+//package ru.practicum.shareit.item.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.client.ItemClient;
@@ -13,33 +12,33 @@ import javax.validation.Valid;
 //import java.util.stream.Collectors;
 
 
-@RestController
-@RequestMapping("/items")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ItemController {
+//@RestController
+//@RequestMapping("/items")
+//@RequiredArgsConstructor
+//public class ItemController {
 
-    private final ItemClient itemClient;
-
-    @PostMapping
-    public ResponseEntity<Object> addItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                          @Valid @RequestBody ItemCreate itemCreate) {
-        return itemClient.createItem(userId, itemCreate);
+//    private final ItemClient itemClient;
+//
+//    @PostMapping
+//    public ResponseEntity<Object> addItem(@RequestHeader("X-Sharer-User-Id") long userId,
+//                                          @Valid @RequestBody ItemCreate itemCreate) {
+//        return itemClient.createItem(userId, itemCreate);
     }
-
-//    @PatchMapping("/{itemId}")
-//    public ItemResponse updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
-//                                   @PathVariable long itemId, @RequestBody UpdateItemDto updateItemDto) {
-//        return mapper.toItemDto(itemService.updateItem(mapper.toItem(updateItemDto, userId), itemId, userId));
-//    }
+//
+////    @PatchMapping("/{itemId}")
+////    public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+////                                   @PathVariable long itemId, @RequestBody UpdateItemDto updateItemDto) {
+////        return itemClient.updateItem(userId, itemId, updateItemDto);
+////    }
 //
 //    @GetMapping("/{itemId}")
-//    public ItemResponseWithBooking getItemById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
-//        return itemService.getItemById(userId, itemId);
+//    public ResponseEntity<Object> getItemById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+//        return itemClient.getItemById(userId, itemId);
 //    }
 //
 //    @GetMapping()
-//    public List<ItemResponseWithBooking> getUserItems(@RequestHeader("X-Sharer-User-Id") long userId) {
-//        return itemService.getUserItems(userId);
+//    public ResponseEntity<Object> getUserItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+//        return itemClient.getUserItems(userId);
 //    }
 //
 //    @GetMapping("/search")
@@ -52,4 +51,4 @@ public class ItemController {
 //                                  @Valid @RequestBody CommentCreateDto comment) {
 //        return commentMapper.toCommentDto(itemService.addComment(userId, itemId, commentMapper.toComment(comment, userId, itemId)));
 //    }
-}
+//}

@@ -16,7 +16,7 @@ public class UserClient extends BaseClient {
     private static final String API_PREFIX = "/users";
 
 
-    public UserClient(@Value("http://localhost:8080") String serverUrl, RestTemplateBuilder builder) {
+    public UserClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
       super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
