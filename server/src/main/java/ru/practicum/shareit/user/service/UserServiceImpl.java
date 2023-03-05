@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User updateUser(long userId, User user) {
+    public User updateUser(Long userId, User user) {
         validate(user);
         User newUser = getUserById(userId);
         if (user.getName() != null) {

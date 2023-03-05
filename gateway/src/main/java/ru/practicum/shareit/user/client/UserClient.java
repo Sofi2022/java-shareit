@@ -30,10 +30,12 @@ public class UserClient extends BaseClient {
         return post("", null, null, userDto);
     }
 
-    public ResponseEntity<Object> updateUser(long userId, UpdateUserDto userDto) {
-//        String path = "/" + userId;
-//        System.out.println(path);
-        return patch("/" + userId, userDto);
+//    public ResponseEntity<Object> getItemById(long userId, long itemId) {
+//        return get("/" + userId, itemId);
+//    }
+
+    public ResponseEntity<Object> getItemById(Long userId, long itemId) {
+        return get("/" + userId, itemId);
     }
 
     public ResponseEntity<Object> getUserById(long userId) {
@@ -46,5 +48,9 @@ public class UserClient extends BaseClient {
 
     public ResponseEntity<Object> getUsers() {
         return get("");
+    }
+
+    public ResponseEntity<Object> updateUser(Long userId, UpdateUserDto userDto) {
+        return patch("/" + userId, userDto);
     }
 }

@@ -25,8 +25,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<Object> updateUser(@PathVariable long userId, @RequestBody UpdateUserDto userDto) {
-        log.info("Gateway : вызван метод updateUser");
+    public ResponseEntity<Object> updateUser(@PathVariable Long userId, @RequestBody UpdateUserDto userDto) {
         return userClient.updateUser(userId, userDto);
     }
 
