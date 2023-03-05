@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
@@ -12,6 +13,7 @@ import ru.practicum.shareit.user.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -22,6 +24,7 @@ public class UserController {
 
     @PostMapping
     public UserDto addUser(@RequestBody UserDto userDto) {
+        log.info("Server: Вызваон метод addUser");
         User user = userService.addUser(UserMapper.toUser(userDto));
         return UserMapper.toUserDto(user);
     }

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,8 +10,7 @@ import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Valid;
-
-
+@Slf4j
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -22,6 +22,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Object> addUser(@Valid @RequestBody UserDto userDto) {
+        log.info("Gateway: Вызваон метод addUser");
        return userClient.createUser(userDto);
     }
 
