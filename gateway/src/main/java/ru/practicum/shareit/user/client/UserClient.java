@@ -15,7 +15,8 @@ public class UserClient extends BaseClient {
 
     private static final String API_PREFIX = "/users";
 
-    public UserClient(@Value("http//localhost:9090") String serverUrl, RestTemplateBuilder builder) {
+
+    public UserClient(@Value("http://localhost:8080") String serverUrl, RestTemplateBuilder builder) {
       super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
@@ -24,7 +25,7 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<Object> createUser(UserDto userDto) {
-        return post("", userDto);
+        return post("", null, null, userDto);
     }
 
     public ResponseEntity<Object> updateUser(long userId, UpdateUserDto userDto) {

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -33,12 +32,10 @@ import static ru.practicum.shareit.booking.model.Status.APPROVED;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
-
     private final UserRepository userRepository;
-
-    private final BookingRepository bookingRepository;
-
     private final CommentRepository commentRepository;
+
+    private ru.practicum.shareit.booking.repository.BookingRepository bookingRepository;
 
     //private final ItemMapper mapper;
 
