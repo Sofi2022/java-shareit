@@ -15,11 +15,11 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserClient userClient;
+    private UserClient userClient;
 
 
     @PostMapping
-    public ResponseEntity<Object> addUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<Object> addUser(@Valid @RequestBody UserDto userDto) {
        return userClient.createUser(userDto);
     }
 
