@@ -394,7 +394,7 @@ class BookingServiceImplTest {
         when(bookingRepository.findUserBookingsCurrentState(userId, LocalDateTime.now().withNano(0)))
                 .thenReturn(currentBookings);
         service.getBookingsByState(State.CURRENT, userId);
-        verify(bookingRepository, times(2)).findUserBookingsCurrentState(userId,
+        verify(bookingRepository, times(1)).findUserBookingsCurrentState(userId,
                 LocalDateTime.now().withNano(0));
     }
 
