@@ -19,20 +19,16 @@ public class UserClient extends BaseClient {
 
     @Autowired
     public UserClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
-      super(builder
+        super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                 .build()
-                );
+        );
     }
 
     public ResponseEntity<Object> createUser(UserDto userDto) {
         return post("", null, null, userDto);
     }
-
-//    public ResponseEntity<Object> getItemById(long userId, long itemId) {
-//        return get("/" + userId, itemId);
-//    }
 
     public ResponseEntity<Object> getItemById(Long userId, long itemId) {
         return get("/" + userId, itemId);

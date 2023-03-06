@@ -22,7 +22,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.model.Status.APPROVED;
@@ -81,7 +80,6 @@ public class ItemServiceImpl implements ItemService {
 //        if (!(itemsIds.contains(itemId))) {
 //            throw new NotFoundException("Такой вещи нет " + itemId);
 //        }
-    //getById(itemId);
 
     @Override
     public ItemResponseWithBooking getItemById(Long userId, Long itemId) {
@@ -101,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> nextBookings = bookingRepository.findNextBookingsByItemIdOrderByStartAsc(itemId,
                 LocalDateTime.now().withNano(0));
         ShortBookingDto nextBookingShort;
-        if(nextBookings.isEmpty()) {
+        if (nextBookings.isEmpty()) {
             nextBookingShort = null;
         } else {
             nextBookingShort = bookingMapper.toShortBooking(nextBookings.get(0));

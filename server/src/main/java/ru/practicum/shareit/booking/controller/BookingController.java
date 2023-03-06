@@ -39,7 +39,6 @@ public class BookingController {
     public BookingResponse updateBooking(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long bookingId,
                                          @RequestBody(required = false) UpdateBookingDto bookingDto, @RequestParam(required = false, name = "approved")
                                          Boolean approved) {
-        //return mapper.toBookingDto(bookingService.approveOrRejectBooking(bookingId, approved, userId));
         Booking booking = bookingMapper.toBooking(bookingDto);
 
         Booking update = bookingService.update(approved, bookingId, userId, booking);
@@ -64,7 +63,6 @@ public class BookingController {
         List<Booking> bookings = bookingService.getAllUserBookings(size, from, userId, state);
         List<BookingResponse> result = bookingMapper.toListBookingDto(bookings);
         return result;
-        //return bookingMapper.toListBookingDto(bookingService.getAllUserBookings(size, from, userId, state));
     }
 
 

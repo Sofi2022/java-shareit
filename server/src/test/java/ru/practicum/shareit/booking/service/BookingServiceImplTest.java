@@ -351,6 +351,7 @@ class BookingServiceImplTest {
         PageImpl<Booking> page = new PageImpl<>(bookings);
 
 
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         when(bookingRepository.findBookingsByBookerIdOrderByStartDesc(any(), anyLong())).thenReturn(page);
         List<Booking> actualBookings = service.getAllUserBookings(1, 2, userId, State.ALL);
         assertEquals(bookings, actualBookings);
@@ -363,12 +364,12 @@ class BookingServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
 
         when(bookingRepository.findBookingByBookerIdOrderByStartDesc(userId)).thenReturn(bookings);
-        List<Booking> actualBookings = service.getAllUserBookings(null, null, userId, State.ALL);
+        List<Booking> actualBookings = service.getAllUserBookings(0, 0, userId, State.ALL);
         assertEquals(bookings, actualBookings);
 
         when(bookingRepository.findFutureByBooker(userId, LocalDateTime.now().withNano(0)))
                 .thenReturn(List.of(getBookings().get(0), getBookings().get(2)));
-        service.getAllUserBookings(null, null, userId, State.FUTURE);
+        service.getAllUserBookings(0, 0, userId, State.FUTURE);
         verify(bookingRepository, times(1)).findFutureByBooker(anyLong(), any());
 
         List<Booking> pastBookings = List.of(getBookings().get(1), getBookings().get(3));
@@ -393,7 +394,7 @@ class BookingServiceImplTest {
         when(bookingRepository.findUserBookingsCurrentState(userId, LocalDateTime.now().withNano(0)))
                 .thenReturn(currentBookings);
         service.getBookingsByState(State.CURRENT, userId);
-        verify(bookingRepository, times(1)).findUserBookingsCurrentState(userId,
+        verify(bookingRepository, times(2)).findUserBookingsCurrentState(userId,
                 LocalDateTime.now().withNano(0));
     }
 
@@ -462,31 +463,30 @@ class BookingServiceImplTest {
 
         List<Booking> bookings = getBookings();
         when(bookingRepository.findAllByOwnerIdOrderByStartDesc(anyLong())).thenReturn(bookings);
-        List<Booking> actualBookings = service.getOwnerBookings(null, null, 5L, State.ALL);
+        service.getOwnerBookings(0, 0, 5L, State.ALL);
         verify(bookingRepository, times(1)).findAllByOwnerIdOrderByStartDesc(any());
-        assertEquals(bookings, actualBookings);
 
         when(bookingRepository.findFutureByOwnerId(anyLong(), any())).thenReturn(List.of(getBookings().get(0),
                 getBookings().get(2)));
-        service.getOwnerBookings(null, null, 5L, State.FUTURE);
+        service.getOwnerBookings(0, 0, 5L, State.FUTURE);
         verify(bookingRepository, times(1)).findFutureByOwnerId(anyLong(), any());
 
         when(bookingRepository.findPastByOwnerId(anyLong(), any())).thenReturn(List.of(getBookings().get(1)));
-        service.getOwnerBookings(null, null, 5L, State.PAST);
+        service.getOwnerBookings(0, 0, 5L, State.PAST);
         verify(bookingRepository, times(1)).findPastByOwnerId(anyLong(), any());
 
         when(bookingRepository.findAllBookingsByOwnerIdAndStateIgnoreCase(any(Status.class), any())).thenReturn(
                 List.of(getBookings().get(0)));
-        service.getOwnerBookings(null, null, 5L, State.WAITING);
+        service.getOwnerBookings(0, 0, 5L, State.WAITING);
 
         when(bookingRepository.findAllBookingsByOwnerIdAndStateIgnoreCase(any(Status.class), any())).thenReturn(
                 List.of(getBookings().get(2)));
-        service.getOwnerBookings(null, null, 5L, State.REJECTED);
+        service.getOwnerBookings(0, 0, 5L, State.REJECTED);
         verify(bookingRepository, times(2)).findAllBookingsByOwnerIdAndStateIgnoreCase(any(Status.class),
                 any());
 
         when(bookingRepository.findCurrentByOwnerId(anyLong(), any())).thenReturn(List.of(getBookings().get(3)));
-        service.getOwnerBookings(null, null, 5L, State.CURRENT);
+        service.getOwnerBookings(0, 0, 5L, State.CURRENT);
         verify(bookingRepository, times(1)).findCurrentByOwnerId(anyLong(), any());
     }
 

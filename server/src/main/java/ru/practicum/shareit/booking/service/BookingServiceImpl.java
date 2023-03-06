@@ -6,9 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -61,7 +61,8 @@ public class BookingServiceImpl implements BookingService {
         validate(booking, itemId);
 
         User booker = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет " + userId));
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));;
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
+        ;
         if (userId == item.getOwner().getId()) {
             throw new NotFoundException("Нельзя забронировать свою вещь " + itemId);
         }
@@ -199,7 +200,7 @@ public class BookingServiceImpl implements BookingService {
         if (!owners.contains(userId)) {
             throw new NotFoundException(userId + " не является владельцем");
         }
-        if (size != null && size != 0) {
+        if (from != 0 && size != 0) {
             int page = from / size;
             final PageRequest pageRequest = PageRequest.of(page, size);
             return getAllByOwnerWithPage(pageRequest, userId);

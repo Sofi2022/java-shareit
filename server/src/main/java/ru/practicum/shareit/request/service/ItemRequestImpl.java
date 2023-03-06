@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,11 @@ public class ItemRequestImpl implements RequestService {
     private final RequestRepository repository;
     private final UserRepository userRepository;
     private final ItemService itemService;
-    //private final ItemRequestMapper mapper;
-    //private final ItemMapper itemMapper;
+    private final ItemRequestMapper mapper;
+
+    private final ItemMapper itemMapper;
+
+    private final ItemRequestMapper itemRequestMapper;
 
 
     @Override
@@ -52,7 +54,7 @@ public class ItemRequestImpl implements RequestService {
                 repository.findAllByRequestor(user);
         if (itemRequests.size() == 0) {
             List<ItemRequest> result = new ArrayList<>();
-            return Mappers.getMapper(ItemRequestMapper.class).toShortList(result);
+            return itemRequestMapper.toShortList(result);
         }
         Map<Integer, List<Item>> map =
                 itemService.findAllByRequestIds(itemRequests.stream()
@@ -61,24 +63,21 @@ public class ItemRequestImpl implements RequestService {
                         .stream()
                         .collect(Collectors.groupingBy(it -> it.getRequest().getId(), Collectors.toList()));
         return itemRequests.stream()
-                .map(Mappers.getMapper(ItemRequestMapper.class)::toShortRequest)
+                .map(itemRequestMapper::toShortRequest)
                 .peek(itemRequest -> itemRequest
-                        .setItems(Mappers.getMapper(ItemMapper.class).toListItemResponse(new ArrayList<>(map.getOrDefault(itemRequest.getId(),
+                        .setItems(itemMapper.toListItemResponse(new ArrayList<>(map.getOrDefault(itemRequest.getId(),
                                 Collections.emptyList())))))
                 .collect(Collectors.toList());
     }
 
-
     @Override
-    public List<ShortItemRequest> getAllRequests(Long userId) {
-        List<ItemRequest> result = repository.getItemRequestByUserId(userId);
-        return Mappers.getMapper(ItemRequestMapper.class).toShortList(result);
-    }
-
-    @Override
-    public List<ItemRequest> getAllWithPage(PageRequest pageRequest, long userId) {
+    public List<ShortItemRequest> getAllWithPage(Long userId, Integer from, Integer size) {
+        int page = from / size;
+        final PageRequest pageRequest = PageRequest.of(page, size);
         Page<ItemRequest> result = repository.findItemRequestByRequester_IdIsNot(pageRequest, userId);
-        return result.getContent();
+        List<ItemRequest> getFromContent = result.getContent();
+        List<ShortItemRequest> shortItemRequests = mapper.toShortList(getFromContent);
+        return shortItemRequests;
     }
 
     private User validateUser(Long userId) {
@@ -89,7 +88,7 @@ public class ItemRequestImpl implements RequestService {
     @Override
     public ShortItemRequest getById(long userId, long requestId) {
         validateUser(userId);
-        return Mappers.getMapper(ItemRequestMapper.class).toShortRequest(repository.findById(requestId)
+        return itemRequestMapper.toShortRequest(repository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Такого запроса нет " + requestId)));
     }
 }

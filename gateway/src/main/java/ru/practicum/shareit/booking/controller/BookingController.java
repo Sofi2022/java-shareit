@@ -10,7 +10,9 @@ import ru.practicum.shareit.booking.client.BookingClient;
 import ru.practicum.shareit.booking.dto.BookingCreateRequest;
 import ru.practicum.shareit.booking.dto.UpdateBookingDto;
 import ru.practicum.shareit.booking.model.State;
-import ru.practicum.shareit.booking.model.Status;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
 
 
 @RestController
@@ -31,9 +33,9 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> updateBooking(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long bookingId,
-                                         @RequestBody(required = false) UpdateBookingDto bookingDto,
-                                         @RequestParam(required = false, name = "approved")
-                                         Boolean approved) {
+                                                @RequestBody(required = false) UpdateBookingDto bookingDto,
+                                                @RequestParam(required = false, name = "approved")
+                                                Boolean approved) {
         return bookingClient.updateBooking(userId, bookingId, bookingDto, approved);
     }
 
@@ -46,10 +48,11 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> getAllUserBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                    @RequestParam(required = false, name = "state", defaultValue = "ALL")
-                                                    State state, @RequestParam(name = "from",
-            defaultValue = "0", required = false) Integer from, @RequestParam(name = "size", defaultValue = "10",
-            required = false) Integer size) {
+                                                     @RequestParam(required = false, name = "state", defaultValue = "ALL")
+                                                     State state,
+                                                     @RequestParam(name = "from", defaultValue = "0",
+                                                             required = false) Integer from, @Min(1) @RequestParam(name = "size", defaultValue = "10", required = false)
+                                                     Integer size) {
 
         try {
             State status = state;
@@ -64,10 +67,10 @@ public class BookingController {
 
     @GetMapping("/owner")
     public ResponseEntity<Object> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                  @RequestParam(required = false, name = "state", defaultValue = "ALL")
-                                                  State state, @RequestParam(name = "from",
-            defaultValue = "0", required = false) Integer from, @RequestParam(name = "size", defaultValue = "0",
-            required = false) Integer size) {
+                                                   @RequestParam(required = false, name = "state", defaultValue = "ALL")
+                                                   State state, @PositiveOrZero @RequestParam(name = "from",
+            defaultValue = "0", required = false) Integer from, @Min(1) @RequestParam(name = "size", defaultValue = "10", required = false)
+                                                   Integer size) {
 
         try {
             State status = state;

@@ -20,16 +20,9 @@ public class BookingResponse {
 
     private LocalDateTime end;
 
-    //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Status status;
 
-    //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    //private User booker;
-
     private UserDto booker;
-
-//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-//    private Item item;
 
     private ItemDto item;
 }
