@@ -13,6 +13,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -55,7 +56,7 @@ public class BookingController {
     @GetMapping
     public List<BookingResponse> getAllUserBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                     @RequestParam(required = false, name = "state", defaultValue = "ALL")
-                                                    State state, @RequestParam(name = "from",
+                                                    State state, @PositiveOrZero @RequestParam(name = "from",
             defaultValue = "0", required = false) Integer from, @RequestParam(name = "size", defaultValue = "10",
             required = false) Integer size) {
         log.info("Server: вызван метод getAllUserBookings");

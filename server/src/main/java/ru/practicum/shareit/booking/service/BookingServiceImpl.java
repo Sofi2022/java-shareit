@@ -178,9 +178,9 @@ public class BookingServiceImpl implements BookingService {
             case ALL:
                 return bookingRepository.findBookingByBookerIdOrderByStartDesc(userId);
             case REJECTED:
-                bookingRepository.findUserBookingsRejectedState(userId);
+                return bookingRepository.findUserBookingsRejectedState(userId);
             case CURRENT:
-                return bookingRepository.findUserBookingsCurrentState(userId, LocalDateTime.now().withNano(0));
+                 return bookingRepository.findUserBookingsCurrentState(userId, LocalDateTime.now().withNano(0));
             case FUTURE:
                 return bookingRepository.findFutureByBooker(userId, LocalDateTime.now().withNano(0));
             case PAST:
