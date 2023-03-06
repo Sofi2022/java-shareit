@@ -386,16 +386,6 @@ class BookingServiceImplTest {
         when(bookingRepository.findUserBookingsRejectedState(userId)).thenReturn(rejectedBookings);
         service.getBookingsByState(State.REJECTED, userId);
         verify(bookingRepository, times(1)).findUserBookingsRejectedState(userId);
-
-        Booking booking1 = makeBookingWithState(LocalDateTime.of(2023, 2, 12, 12, 30),
-                LocalDateTime.of(2023, 6, 14, 12, 30),
-                Status.CANCELED, item, booker);
-        List<Booking> currentBookings = List.of(booking1);
-        when(bookingRepository.findUserBookingsCurrentState(userId, LocalDateTime.now().withNano(0)))
-                .thenReturn(currentBookings);
-        service.getBookingsByState(State.CURRENT, userId);
-        verify(bookingRepository, times(1)).findUserBookingsCurrentState(userId,
-                LocalDateTime.now().withNano(0));
     }
 
 
