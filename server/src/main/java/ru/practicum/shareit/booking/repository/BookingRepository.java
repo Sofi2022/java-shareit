@@ -38,6 +38,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b join fetch b.item where b.status = 'REJECTED' and b.booker.id = :userId")
     List<Booking> findUserBookingsRejectedState(@Param("userId") Long userId);
 
+    //List<Booking> findBookingsByBookerIdAndAndStatusIs
+
+    @Query("select b from Booking b join fetch b.item where b.status = :state and b.booker.id = :userId")
+    List<Booking> findBookingByBookerIdAndAndStatusIgnoreCase(Long userId, @Param("state") Status state);
+
     @Query("select b from Booking b join fetch b.item where b.booker.id = :userId and b.start < :now and b.end > :now")
     List<Booking> findUserBookingsCurrentState(@Param("userId") Long userId, @Param("now") LocalDateTime now);
 

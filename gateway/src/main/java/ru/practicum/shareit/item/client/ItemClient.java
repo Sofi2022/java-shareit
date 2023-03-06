@@ -36,11 +36,11 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getItemById(long userId, long itemId) {
-        return get("/" + userId, itemId);
+        return get("/" + itemId, userId);
     }
 
     public ResponseEntity<Object> getUserItems(long userId) {
-        return get("/" + userId);
+        return get("", userId);
     }
 
     public ResponseEntity<Object> searchItem(String text) {

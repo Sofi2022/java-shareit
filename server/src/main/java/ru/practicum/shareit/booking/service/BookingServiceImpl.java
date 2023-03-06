@@ -153,7 +153,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllUserBookings(Integer size, Integer from, Long userId, State state) {
-        if (size != null) {
+        validateUser(userId);
+        if (size != 0 && from != 0) {
             int page = from / size;
             final PageRequest pageRequest = PageRequest.of(page, size);
             return getAllWithPage(pageRequest, userId);
@@ -172,20 +173,19 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getBookingsByState(State state, Long userId) {
-        validateUser(userId);
         switch (state) {
             case ALL:
                 return bookingRepository.findBookingByBookerIdOrderByStartDesc(userId);
+            case REJECTED:
+                bookingRepository.findUserBookingsRejectedState(userId);
+            case CURRENT:
+                return bookingRepository.findUserBookingsCurrentState(userId, LocalDateTime.now().withNano(0));
             case FUTURE:
                 return bookingRepository.findFutureByBooker(userId, LocalDateTime.now().withNano(0));
             case PAST:
                 return bookingRepository.findPastByBooker(userId, LocalDateTime.now().withNano(0));
             case WAITING:
                 return bookingRepository.findUserBookingsWaitingState(userId);
-            case REJECTED:
-                return bookingRepository.findUserBookingsRejectedState(userId);
-            case CURRENT:
-                return bookingRepository.findUserBookingsCurrentState(userId, LocalDateTime.now().withNano(0));
             default:
                 throw new IllegalArgumentException("Unknown state");
         }
@@ -199,7 +199,7 @@ public class BookingServiceImpl implements BookingService {
         if (!owners.contains(userId)) {
             throw new NotFoundException(userId + " не является владельцем");
         }
-        if (size != null) {
+        if (size != null && size != 0) {
             int page = from / size;
             final PageRequest pageRequest = PageRequest.of(page, size);
             return getAllByOwnerWithPage(pageRequest, userId);

@@ -2,12 +2,12 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -22,6 +22,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.model.Status.APPROVED;
@@ -35,11 +36,11 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-    private ru.practicum.shareit.booking.repository.BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository;
 
-    //private final ItemMapper mapper;
+    private final ItemMapper itemMapper;
 
-    //private final BookingMapper bookingMapper;
+    private final BookingMapper bookingMapper;
 
 
     @Override
@@ -86,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponseWithBooking getItemById(Long userId, Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи нет " + itemId));
         if (!(item.getOwner().getId() == userId)) {
-            return Mappers.getMapper(ItemMapper.class).toItemWithNullBooking(item, null, null);
+            return itemMapper.toItemWithNullBooking(item, null, null);
         }
         List<Booking> lastBookings = bookingRepository.findLastBookingsByItemIdOrderByStartDesc(itemId,
                 LocalDateTime.now().withNano(0));
@@ -94,21 +95,21 @@ public class ItemServiceImpl implements ItemService {
         if (lastBookings.isEmpty()) {
             lastBookingShort = null;
         } else {
-            lastBookingShort = Mappers.getMapper(BookingMapper.class).toShortBooking(lastBookings.get(0));
+            lastBookingShort = bookingMapper.toShortBooking(lastBookings.get(0));
         }
 
         List<Booking> nextBookings = bookingRepository.findNextBookingsByItemIdOrderByStartAsc(itemId,
                 LocalDateTime.now().withNano(0));
         ShortBookingDto nextBookingShort;
-        if (nextBookings.isEmpty()) {
+        if(nextBookings.isEmpty()) {
             nextBookingShort = null;
         } else {
-            nextBookingShort = Mappers.getMapper(BookingMapper.class).toShortBooking(nextBookings.get(0));
+            nextBookingShort = bookingMapper.toShortBooking(nextBookings.get(0));
         }
         if (lastBookingShort == null || nextBookingShort == null) {
-            return Mappers.getMapper(ItemMapper.class).toItemWithNullBooking(item, lastBookingShort, nextBookingShort);
+            return itemMapper.toItemWithNullBooking(item, lastBookingShort, nextBookingShort);
         }
-            return Mappers.getMapper(ItemMapper.class).toItemWithBooking(item, lastBookingShort, nextBookingShort);
+            return itemMapper.toItemWithBooking(item, lastBookingShort, nextBookingShort);
     }
 
     @Override
