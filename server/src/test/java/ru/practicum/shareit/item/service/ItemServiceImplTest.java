@@ -267,7 +267,7 @@ class ItemServiceImplTest {
         items.add(item1);
         items.add(item3);
 
-        when(itemRepository.getUserItems(anyLong())).thenReturn(items);
+        when(itemRepository.getUserItemsOrderedById(anyLong())).thenReturn(items);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item1));
         List<ItemResponseWithBooking> actual = itemService.getUserItems(ownerId1);
         assertEquals(2, actual.size());
