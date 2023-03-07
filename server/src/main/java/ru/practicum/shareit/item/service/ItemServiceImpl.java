@@ -123,7 +123,6 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
         List<Item> result = itemRepository.findByNameOrDescriptionContainingIgnoreCase(text, text);
-
         return result.stream().filter(Item::getAvailable).collect(Collectors.toList());
     }
 
