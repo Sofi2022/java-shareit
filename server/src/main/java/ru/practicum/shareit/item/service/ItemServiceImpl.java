@@ -87,6 +87,7 @@ public class ItemServiceImpl implements ItemService {
         if (!(item.getOwner().getId() == userId)) {
             return itemMapper.toItemWithNullBooking(item, null, null);
         }
+
         List<Booking> lastBookings = bookingRepository.findLastBookingsByItemIdOrderByStartDesc(itemId,
                 LocalDateTime.now().withNano(0));
         ShortBookingDto lastBookingShort;
