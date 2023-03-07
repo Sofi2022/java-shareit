@@ -15,8 +15,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query(value = "select i.id from Item i")
     List<Long> getItemsIds();
 
-    @Query(value = "select i from Item i where i.owner.id = ?1")
-    List<Item> getUserItems(Long userId);
+    @Query(value = "select i from Item i where i.owner.id = ?1 order by i.id")
+    List<Item> getUserItemsOrderedById(Long userId);
 
     List<Item> findByNameOrDescriptionContainingIgnoreCase(String text1, String text2);
 

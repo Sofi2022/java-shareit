@@ -113,9 +113,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemResponseWithBooking> getUserItems(Long userId) {
-        List<Item> items = itemRepository.getUserItems(userId);
-        return items.stream().map(item -> getItemById(userId, item.getId()))
-                .collect(Collectors.toList());
+        List<Item> items = itemRepository.getUserItemsOrderedById(userId);
+        return items.stream().map(item -> getItemById(userId, item.getId())).collect(Collectors.toList());
     }
 
     @Override
