@@ -105,9 +105,9 @@ public class ItemServiceImpl implements ItemService {
             nextBookingShort = bookingMapper.toShortBooking(nextBookings.get(0));
         }
         if (lastBookingShort == null || nextBookingShort == null) {
-            return itemMapper.toItemWithNullBooking(item, lastBookingShort, nextBookingShort);
+                     return itemMapper.toItemWithNullBooking(item, lastBookingShort, nextBookingShort);
         }
-            return itemMapper.toItemWithBooking(item, lastBookingShort, nextBookingShort);
+        return itemMapper.toItemWithBooking(item, lastBookingShort, nextBookingShort);
     }
 
     @Override
