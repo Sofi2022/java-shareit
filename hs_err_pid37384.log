@@ -1,0 +1,199 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 132120576 bytes for Failed to commit area from 0x0000000082800000 to 0x000000008a600000 of length 132120576.
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (./src/hotspot/os/windows/os_windows.cpp:3387), pid=37384, tid=34760
+#
+# JRE version:  (11.0.14+9) (build )
+# Java VM: OpenJDK 64-Bit Server VM (11.0.14+9-LTS, mixed mode, sharing, tiered, compressed oops, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -javaagent:C:\\Users\\Honor\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.8\\org.jacoco.agent-0.8.8-runtime.jar=destfile=C:\\Users\\Honor\\IdeaProjects\\java-shareit\\target\\jacoco.exec,output=file C:\Users\Honor\AppData\Local\Temp\surefire1858174095958279974\surefirebooter12955826857757493682.jar C:\Users\Honor\AppData\Local\Temp\surefire1858174095958279974 2023-02-20T22-27-05_778-jvmRun1 surefire10773113371934447845tmp surefire_018011033445378593758tmp
+
+Host: Intel(R) Core(TM) i3-10110U CPU @ 2.10GHz, 4 cores, 7G,  Windows 11 , 64 bit Build 22000 (10.0.22000.1335)
+Time: Mon Feb 20 22:27:06 2023 RTZ 2 (зима) elapsed time: 0.018610 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x000001ec1bf5e000):  JavaThread "Unknown thread" [_thread_in_vm, id=34760, stack(0x0000000e41800000,0x0000000e41900000)]
+
+Stack: [0x0000000e41800000,0x0000000e41900000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x61e62a]
+V  [jvm.dll+0x7ab569]
+V  [jvm.dll+0x7acc58]
+V  [jvm.dll+0x7ad333]
+V  [jvm.dll+0x24f7f8]
+V  [jvm.dll+0x61b8ca]
+V  [jvm.dll+0x610155]
+V  [jvm.dll+0x30756c]
+V  [jvm.dll+0x3073f2]
+V  [jvm.dll+0x30c116]
+V  [jvm.dll+0x3527bf]
+V  [jvm.dll+0x3521f0]
+V  [jvm.dll+0x2e4568]
+V  [jvm.dll+0x2e56c6]
+V  [jvm.dll+0x785407]
+V  [jvm.dll+0x786b8f]
+V  [jvm.dll+0x35f4f9]
+V  [jvm.dll+0x7683a0]
+V  [jvm.dll+0x3ccf9f]
+V  [jvm.dll+0x3cf331]
+C  [jli.dll+0x5207]
+C  [ucrtbase.dll+0x26c0c]
+C  [KERNEL32.DLL+0x155a0]
+C  [ntdll.dll+0x485b]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x000001ec19e19030, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x000001ec1bf76000 GCTaskThread "GC Thread#0" [stack: 0x0000000e41900000,0x0000000e41a00000] [id=38992]
+  0x000001ec1bfa5800 ConcurrentGCThread "G1 Main Marker" [stack: 0x0000000e41a00000,0x0000000e41b00000] [id=9352]
+  0x000001ec1bfa7800 ConcurrentGCThread "G1 Conc#0" [stack: 0x0000000e41b00000,0x0000000e41c00000] [id=9020]
+
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffb73903d37]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x000001ec1bf59930] Heap_lock - owner thread: 0x000001ec1bf5e000
+
+Heap address: 0x0000000082800000, size: 2008 MB, Compressed Oops mode: Non-zero based: 0x0000000082800000
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (1 events):
+Event: 0.010 Loaded shared library C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\zip.dll
+
+
+Dynamic libraries:
+0x00007ff60e2f0000 - 0x00007ff60e2fd000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\java.exe
+0x00007ffbf5d60000 - 0x00007ffbf5f69000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffbf5690000 - 0x00007ffbf574e000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffbf36a0000 - 0x00007ffbf3a1b000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffbf33a0000 - 0x00007ffbf34b1000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffbe7020000 - 0x00007ffbe7037000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\jli.dll
+0x00007ffbe6640000 - 0x00007ffbe6659000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\VCRUNTIME140.dll
+0x00007ffbf5470000 - 0x00007ffbf561d000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffbf3580000 - 0x00007ffbf35a6000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffbf5bc0000 - 0x00007ffbf5be9000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffbd4830000 - 0x00007ffbd4ad5000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22000.120_none_9d947278b86cc467\COMCTL32.dll
+0x00007ffbf3a20000 - 0x00007ffbf3b38000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffbf3e10000 - 0x00007ffbf3eb3000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffbf3b40000 - 0x00007ffbf3bdd000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffbf3ff0000 - 0x00007ffbf4022000 	C:\WINDOWS\System32\IMM32.DLL
+0x000000006b7c0000 - 0x000000006b7cc000 	C:\Program Files (x86)\360\Total Security\safemon\SafeWrapper.dll
+0x00007ffbf3be0000 - 0x00007ffbf3c8e000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffbf4970000 - 0x00007ffbf4a0e000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffbf47f0000 - 0x00007ffbf4910000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffbadae0000 - 0x00007ffbadb72000 	C:\Program Files (x86)\360\Total Security\safemon\libzdtp64.dll
+0x00007ffbf4030000 - 0x00007ffbf47e7000 	C:\WINDOWS\System32\SHELL32.dll
+0x00007ffbf5020000 - 0x00007ffbf507d000 	C:\WINDOWS\System32\SHLWAPI.dll
+0x00007ffbf2be0000 - 0x00007ffbf2bea000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffbada40000 - 0x00007ffbadadb000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\msvcp140.dll
+0x00007ffb73610000 - 0x00007ffb74193000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\server\jvm.dll
+0x00007ffbf3d10000 - 0x00007ffbf3d18000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffbc06f0000 - 0x00007ffbc06f9000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffbe9a20000 - 0x00007ffbe9a53000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffbf5080000 - 0x00007ffbf50ef000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffbf2330000 - 0x00007ffbf2348000 	C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+0x00007ffbe8780000 - 0x00007ffbe8790000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\verify.dll
+0x00007ffbf0f00000 - 0x00007ffbf1121000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007ffbe79a0000 - 0x00007ffbe79d1000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007ffbf3620000 - 0x00007ffbf369f000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffbb4170000 - 0x00007ffbb4198000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\java.dll
+0x00007ffbe7bf0000 - 0x00007ffbe7bfa000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\jimage.dll
+0x00007ffbe8e60000 - 0x00007ffbe8e6e000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\instrument.dll
+0x00007ffbe0a40000 - 0x00007ffbe0a58000 	C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\zip.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22000.120_none_9d947278b86cc467;C:\Program Files (x86)\360\Total Security\safemon;C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin\server
+
+VM Arguments:
+jvm_args: -javaagent:C:\\Users\\Honor\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.8\\org.jacoco.agent-0.8.8-runtime.jar=destfile=C:\\Users\\Honor\\IdeaProjects\\java-shareit\\target\\jacoco.exec,output=file 
+java_command: C:\Users\Honor\AppData\Local\Temp\surefire1858174095958279974\surefirebooter12955826857757493682.jar C:\Users\Honor\AppData\Local\Temp\surefire1858174095958279974 2023-02-20T22-27-05_778-jvmRun1 surefire10773113371934447845tmp surefire_018011033445378593758tmp
+java_class_path (initial): C:\Users\Honor\AppData\Local\Temp\surefire1858174095958279974\surefirebooter12955826857757493682.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 3                                         {product} {ergonomic}
+     uint ConcGCThreads                            = 1                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 4                                         {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 1048576                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 132120576                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 2105540608                                {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 1048576                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 5830732                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122913754                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122913754                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+     bool UseCompressedClassPointers               = true                                 {lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                                 {lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Amazon Corretto\jdk11.0.14_9
+PATH=C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Amazon Corretto\jdk11.0.14_9\bin;C:\Program Files\Git\cmd;C:\Users\Honor\AppData\Local\Microsoft\WindowsApps;;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.3.2\bin;
+USERNAME=Honor
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 142 Stepping 12, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 11 , 64 bit Build 22000 (10.0.22000.1335)
+OS uptime: 12 days 7:14 hours
+
+CPU:total 4 (initial active 4) (2 cores per cpu, 2 threads per core) family 6 model 142 stepping 12 microcode 0xde, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, 3dnowpref, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2, adx, fma
+
+Memory: 4k page, system-wide physical 8025M (300M free)
+TotalPageFile size 23385M (AvailPageFile size 106M)
+current process WorkingSet (physical memory assigned to process): 11M, peak: 11M
+current process commit charge ("private bytes"): 52M, peak: 178M
+
+vm_info: OpenJDK 64-Bit Server VM (11.0.14+9-LTS) for windows-amd64 JRE (11.0.14+9-LTS), built on Jan 15 2022 01:18:46 by "Administrator" with unknown MS VC++:1916
+
+END.
