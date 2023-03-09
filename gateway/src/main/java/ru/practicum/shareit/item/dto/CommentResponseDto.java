@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -28,7 +27,6 @@ public class CommentResponseDto {
     @NotBlank
     private String authorName;
 
-    @CreationTimestamp
     @NotNull
     private LocalDateTime created;
 }

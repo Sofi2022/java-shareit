@@ -55,10 +55,9 @@ public class BookingController {
 
     @GetMapping
     public List<BookingResponse> getAllUserBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                    @RequestParam(required = false, name = "state", defaultValue = "ALL")
+                                                    @RequestParam(name = "state", defaultValue = "ALL")
                                                     State state, @PositiveOrZero @RequestParam(name = "from",
-            defaultValue = "0", required = false) Integer from, @RequestParam(name = "size", defaultValue = "10",
-            required = false) Integer size) {
+            defaultValue = "0") Integer from, @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Server: вызван метод getAllUserBookings");
         log.info("{}, {}, {}, {}", userId, state, from, size);
         List<Booking> bookings = bookingService.getAllUserBookings(size, from, userId, state);
@@ -69,10 +68,9 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingResponse> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                  @RequestParam(required = false, name = "state", defaultValue = "ALL")
-                                                  State state, @RequestParam(name = "from",
-            defaultValue = "0", required = false) Integer from, @RequestParam(name = "size", defaultValue = "10",
-            required = false) Integer size) {
+                                                  @RequestParam(name = "state", defaultValue = "ALL") State state,
+                                                  @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                  @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
         return bookingMapper.toListBookingDto(bookingService.getOwnerBookings(size, from, userId, state));
     }

@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.dto.ItemCreate;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
 
 import javax.validation.Valid;
+import java.util.Collections;
 
 @Slf4j
 @RestController
@@ -48,6 +49,9 @@ public class ItemController {
     @GetMapping("/search")
     public ResponseEntity<Object> searchItem(@RequestParam String text) {
         log.info("Gateway : вызван метод searchItem");
+        if (text.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
         return itemClient.searchItem(text);
     }
 

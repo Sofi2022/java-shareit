@@ -20,7 +20,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -119,9 +118,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> searchByName(String text) {
-        if (text.isEmpty()) {
-            return Collections.emptyList();
-        }
         List<Item> result = itemRepository.findByNameOrDescriptionContainingIgnoreCase(text, text);
         return result.stream().filter(Item::getAvailable).collect(Collectors.toList());
     }

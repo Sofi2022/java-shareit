@@ -1,14 +1,13 @@
 package ru.practicum.shareit.request.dto;
 
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
-import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -23,6 +22,5 @@ public class ItemCreateRequest {
 
     private UserDto requester;
 
-    @CreationTimestamp
     private LocalDateTime created;
 }

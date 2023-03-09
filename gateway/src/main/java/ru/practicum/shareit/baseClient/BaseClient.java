@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+package ru.practicum.shareit.baseClient;
 
 import java.util.List;
 import java.util.Map;

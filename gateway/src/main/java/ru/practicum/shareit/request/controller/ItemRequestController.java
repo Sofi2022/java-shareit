@@ -24,7 +24,8 @@ public class ItemRequestController {
     private final ItemRequestClient client;
 
     @PostMapping
-    public ResponseEntity<Object> addRequest(@RequestHeader("X-Sharer-User-Id") long userId, @Valid @RequestBody ItemCreateRequest request) {
+    public ResponseEntity<Object> addRequest(@RequestHeader("X-Sharer-User-Id") long userId, @Valid @RequestBody
+    ItemCreateRequest request) {
         log.info("Вызван метод addRequest");
         return client.createRequest(userId, request);
     }
@@ -37,10 +38,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllRequests(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0",
-                                                         required = false) Integer from,
-                                                 @Min(1) @RequestParam(name = "size", defaultValue = "10", required = false)
-                                                 Integer size) {
+                                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                 @Min(1) @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Gateway: вызван метод get all");
         log.info("{}, {}, {}", userId, from, size);
         return client.getAllRequests(userId, from, size);

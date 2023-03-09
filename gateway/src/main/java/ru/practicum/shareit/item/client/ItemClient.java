@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.shareit.BaseClient;
+import ru.practicum.shareit.baseClient.BaseClient;
 import ru.practicum.shareit.item.dto.CommentCreateDto;
 import ru.practicum.shareit.item.dto.ItemCreate;
 import ru.practicum.shareit.item.dto.UpdateItemDto;

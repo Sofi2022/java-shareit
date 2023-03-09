@@ -2,7 +2,6 @@ package ru.practicum.shareit.request.dto;
 
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
-import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.shareit.item.dto.ItemResponse;
 
 import java.time.LocalDateTime;
@@ -20,7 +19,6 @@ public class ItemRequestDto {
 
     private String description;
 
-    @CreationTimestamp
     private LocalDateTime created;
 
     private List<ItemResponse> items;

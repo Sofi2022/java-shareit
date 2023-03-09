@@ -48,17 +48,10 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> getAllUserBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                     @RequestParam(required = false, name = "state", defaultValue = "ALL")
-                                                     State state,
-                                                     @RequestParam(name = "from", defaultValue = "0",
-                                                             required = false) Integer from, @Min(1) @RequestParam(name = "size", defaultValue = "10", required = false)
-                                                     Integer size) {
-
-        try {
-            State status = state;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Unknown state: " + state);
-        }
+                                                     @RequestParam(name = "state", defaultValue = "ALL") State state,
+                                                     @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                     @Min(1) @RequestParam(name = "size", defaultValue = "10")
+                                                         Integer size) {
         log.info("Gateway: вызван метод getAllUserBookings");
         log.info("{}, {}, {}, {}", userId, state, from, size);
         return bookingClient.getAllUserBookings(userId, state, from, size);
@@ -67,16 +60,10 @@ public class BookingController {
 
     @GetMapping("/owner")
     public ResponseEntity<Object> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                   @RequestParam(required = false, name = "state", defaultValue = "ALL")
-                                                   State state, @PositiveOrZero @RequestParam(name = "from",
-            defaultValue = "0", required = false) Integer from, @Min(1) @RequestParam(name = "size", defaultValue = "10", required = false)
+                                                   @RequestParam(name = "state", defaultValue = "ALL") State state,
+                                                   @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+                                                       Integer from, @Min(1) @RequestParam(name = "size", defaultValue = "10")
                                                    Integer size) {
-
-        try {
-            State status = state;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Unknown state: " + state);
-        }
         log.info("Gateway: вызван метод getOwnerBookings");
         log.info("{}, {}, {}, {}", userId, state, from, size);
         return bookingClient.getOwnerBookings(userId, state, from, size);

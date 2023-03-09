@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.shareit.BaseClient;
+import ru.practicum.shareit.baseClient.BaseClient;
 import ru.practicum.shareit.booking.dto.BookingCreateRequest;
 import ru.practicum.shareit.booking.dto.UpdateBookingDto;
 import ru.practicum.shareit.booking.model.State;

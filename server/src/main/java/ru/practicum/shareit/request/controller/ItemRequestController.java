@@ -40,7 +40,7 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ShortItemRequest> getAllRequests(@RequestHeader("X-Sharer-User-Id") long userId, @RequestParam(name = "from",
-            defaultValue = "0") Integer from, @RequestParam(name = "size", defaultValue = "10", required = false) Integer size) {
+            defaultValue = "0") Integer from, @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Вызван метод get all");
         return service.getAllWithPage(userId, from, size);
     }
